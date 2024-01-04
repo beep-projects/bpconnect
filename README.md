@@ -1,5 +1,5 @@
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset=".resources/bmconnect_banner_dark.png">
+  <source media="(prefers-color-scheme: dark)" srcset="resources/bmconnect_banner_dark.png">
   <img alt="bm+connect" src="resources/bmconnect_banner.png">
 </picture>
 
