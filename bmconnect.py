@@ -34,7 +34,7 @@ import json
 import requests
 from pathlib import Path
 
-conf_folder = Path.home() / '.bmconnect'
+conf_folder = Path.home() / '.config' / 'bmconnect'
 conf_file = conf_folder / 'conf.json'
 users = {}
 default_beurer_user_id = 1
