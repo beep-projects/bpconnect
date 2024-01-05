@@ -37,7 +37,8 @@ from pathlib import Path
 conf_folder = Path.home() / '.bmconnect'
 conf_file = conf_folder / 'conf.json'
 users = {}
-beurer_user_id = 1
+default_beurer_user_id = 1
+beurer_user_id = default_beurer_user_id
 ignore_measurement_user_id = False
 lang = 'en'
 max_age_days = 90
@@ -116,12 +117,14 @@ def _get_credentials():
 def _read_config():
   global lang
   global users
+  global default_beurer_user_id
   #global measurement_history
   print(f'[bmconnect:_read_config] {conf_file}')
   try:
     with conf_file.open() as f:
       config = json.load(f)
       lang = config.get('lang', 'en')
+      default_beurer_user_id = config.get('default_beurer_user_id', 1)
       users = config.get('users', {})
       for key in users:
         users[key]['garmin_password'] = base64.b64decode(users[key]['garmin_password']).decode(
@@ -147,7 +150,7 @@ def _write_config():
       #    {'lang': lang, 'users': json_users, 'measurement_history': measurement_history},
       #    f,
       #)
-      json.dump({'lang': lang, 'users': json_users},f)
+      json.dump({'lang': lang, 'default_beurer_user_id': default_beurer_user_id, 'users': json_users},f)
   except (PermissionError, IOError, OSError) as e:
     print('[bmconnect:_write_config] Error: ', e)
 
@@ -174,15 +177,16 @@ def _get_all_measurements():
 
 
 def _get_measurement_hash(measurement: dict) -> str:
+  m = measurement.copy()
   # ignore user for hash. The user cannot be retrieved back from Garmin Connect
-  measurement['user']=0
+  m['user']=0
   # ignore calculated fields.
   # They have little to no added value for the hash and are difficult to 
   # retrieved back from Garmin Connect, because we don't know of language settings have changed
-  measurement['irregular heart beat']=False
-  measurement['risk index']=0
-  measurement['recommendation']=''
-  return hashlib.sha256(json.dumps(measurement, sort_keys=True).encode('utf-8')).hexdigest()
+  m['irregular heart beat']=False
+  m['risk index']=0
+  m['recommendation']=''
+  return hashlib.sha256(json.dumps(m, sort_keys=True).encode('utf-8')).hexdigest()
 
 
 def _get_measurement_hashes_from_gc(gc: Garmin, dayspan=max_age_days) -> [str]:
@@ -216,66 +220,81 @@ def _get_measurement_hashes_from_gc(gc: Garmin, dayspan=max_age_days) -> [str]:
 
 
 def _get_args():
-  parser = argparse.ArgumentParser()
+  parser = argparse.ArgumentParser(add_help=False)
   parser.add_argument(
-      '-l',
-      '--login',
-      dest='login',
-      required=False,
-      action='store_true',
-      help='configure the credentials for your Garmin Connect account and test it',
+    '-h',
+    '--help',
+    action='help',
+    default=argparse.SUPPRESS,
+    help=text['help_help'][lang]
   )
   parser.add_argument(
-      '-u',
-      '--user',
-      dest='beurer_user_id',
-      metavar='{1, ..., 255}',
-      required=False,
-      type=int,
-      choices=range(1, 256),
-      action='store',
-      help=(
-          'configure the active user on the Beurer device whose measurements shall be uploaded to'
-          ' Garmin Connect. Defaults to 1 if not set.'
-      ),
+    '-l',
+    '--login',
+    dest='login',
+    required=False,
+    action='store_true',
+    help=text['help_login'][lang]
   )
   parser.add_argument(
-      '-i',
-      '--ignore',
-      dest='ignore_measurement_user_id',
-      required=False,
-      action='store_true',
-      help=(
-          'ignore user id stored in measuremnts. Needed for devices, that do not support user id in'
-          ' readouts, but have multiple users on the device.'
-      ),
+    '-u',
+    '--user',
+    dest='user',
+    metavar='{1, ..., 255}',
+    required=False,
+    type=int,
+    choices=range(1, 256),
+    action='store',
+    help=text['help_user'][lang]
   )
   parser.add_argument(
-      '-lc',
-      '--language',
-      dest='lang',
-      required=False,
-      type=str.lower,
-      choices=text_lang,
-      action='store',
-      help=(
-          'the language code configures the language in which notes are uploaded with the'
-          ' meassurements to Garmin Connect'
-      ),
+    '-du',
+    '--default_user',
+    dest='default_user',
+    metavar='{1, ..., 255}',
+    required=False,
+    type=int,
+    choices=range(1, 256),
+    action='store',
+    help=text['help_default_user'][lang]
+  )
+  parser.add_argument(
+    '-i',
+    '--ignore',
+    dest='ignore_measurement_user_id',
+    required=False,
+    action='store_true',
+    help=text['help_ignore'][lang]
+  )
+  parser.add_argument(
+    '-lc',
+    '--language',
+    dest='lang',
+    required=False,
+    type=str.lower,
+    choices=text_lang,
+    action='store',
+    help=text['help_language'][lang]
   )
   args = parser.parse_args()
   return args
 
 
 def main():
+  global default_beurer_user_id
   global beurer_user_id
   global ignore_measurement_user_id
   global lang
   _read_config()
   args = _get_args()
 
-  if args.beurer_user_id:
-    beurer_user_id = True
+  if args.default_user:
+    default_beurer_user_id = args.default_user
+
+  if args.user:
+    beurer_user_id = args.user
+  else:
+    beurer_user_id = default_beurer_user_id
 
   if args.ignore_measurement_user_id or beurer_user_id not in [1, 2]:
     ignore_measurement_user_id = True
@@ -327,7 +346,7 @@ def main():
         gc.set_blood_pressure(
             m['systolic'], m['diastolic'], m['pulse rate'], timestamp, notes=notes
         )
-        measurement_history.append(m_hash)
+        #measurement_history.append(m_hash)
         print(f"{timestamp}: {m['systolic']}/{m['diastolic']} {m['pulse rate']}")
         count += 1
     print(f'{count} {text["info_measurements_uploaded"][lang]}')
