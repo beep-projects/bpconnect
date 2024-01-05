@@ -405,6 +405,38 @@ class BeurerBMUSB(BeurerBM):
     return measurement
 
 
+def get_empty_measurement() -> dict[str, any] | None:
+  """Get a prototype of a measurement
+
+  Returns:
+    dict with following keys
+    'systolic' = Systolic measurement in mmHg
+    'diastolic' = Diastolic measurement in mmHg
+    'pulse rate' = Pulse rate of the measurement in beats per minute
+    'day' = day of the measurement date
+    'month' = month of the measurement date
+    'year' = year of the measurement date
+    'hour' = hour of the measurement timestamp
+    'minute' = minute of the measurement timestamp
+    'user' = user id if supported by the device, or 0
+    'irregular heart beat' = True if irregular heart beat was detected else False
+    'risk index' = WHO risk assessment for this measurement
+    'recommendation' = recommendation to take action based on risk index
+  """
+  return {'systolic':-1,
+          'diastolic':-1,
+          'pulse rate':-1,
+          'day':-1,
+          'month':-1,
+          'year':-1,
+          'hour':-1,
+          'minute':-1,
+          'user':-1,
+          'irregular heart beat':False,
+          'risk index':-1,
+          'recommendation':''}
+
+
 def find(device: str = None, timeout: int = 10) -> BeurerBM:
   """Find any Beurer blood preassure meter connected it to this machine
 

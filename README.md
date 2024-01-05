@@ -23,14 +23,14 @@ Create virtual python environment and get the required modules
 python3 -m venv venv
 venv/bin/pip3 install -r requirements.txt
 ```
-### configure bmconnect
+### Configure bmconnect
 Note, the config will be saved for the user running bmconnect.py, so if you intend to install bmconnect to be automatically run as soon as a device is plugged in, you have to run the following command as `sudo`.
 You need to configure `--login`, but you can also configure `--user` and `--language`.
 ```
 venv/bin/python3 bmconnect.py --login
 ```
-### grant access to everyone if the device is plugged in
-By default, only the root user can access the device. By adding this rule to udev, you allow it for every user
+### Grant access to everyone
+By default, only the root user can access the device. By adding this rule to udev, you allow it for all users
 ```
 sudo cp 98-beurerBM58.rules /etc/udev/rules.d/
 ```
@@ -39,9 +39,12 @@ Now you can test if everything works fine for you. Plug in your device and execu
 ```
 venv/bin/python3 bmconnect.py
 ```
-### patch bmconnect.service 
+### Patch bmconnect.service 
 If the test was successful, you can continue to install the rules, to run `bmconnect.py` everytime you plug in your Beurer device. First, you have to patch the service file, to use your current installation
 ```
+# edit this line: 
+# ExecStart=[path to python venv]/python3 [path to script]/bmconnect.py
+# by hand, or via
 sed -i "s|^ExecStart=.*|ExecStart="$(pwd)"\/venv\/bin/python3 "$(pwd)"\/bmconnect.py|" bmconnect.service
 ```
 ### install bmconnect.service to systemd

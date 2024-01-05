@@ -23,7 +23,7 @@ and upload them to Garmin Connect
 import argparse
 import base64
 import copy
-from datetime import datetime
+from datetime import date, datetime, timedelta
 import hashlib
 import beurerbm
 from bmconnect_i18n import text_lang, text
@@ -40,8 +40,9 @@ users = {}
 beurer_user_id = 1
 ignore_measurement_user_id = False
 lang = 'en'
-max_history_entries = 200
-measurement_history = []
+max_age_days = 90
+#max_history_entries = 200
+#measurement_history = []
 # blood_pressure_rating =
 
 
@@ -115,7 +116,8 @@ def _get_credentials():
 def _read_config():
   global lang
   global users
-  global measurement_history
+  #global measurement_history
+  print(f'[bmconnect:_read_config] {conf_file}')
   try:
     with conf_file.open() as f:
       config = json.load(f)
@@ -125,7 +127,7 @@ def _read_config():
         users[key]['garmin_password'] = base64.b64decode(users[key]['garmin_password']).decode(
             'utf-8'
         )
-      measurement_history = config.get('measurement_history', [])
+      #measurement_history = config.get('measurement_history', [])
   except FileNotFoundError:
     # if the file does not exist, it will be created with default values
     pass
@@ -141,10 +143,11 @@ def _write_config():
         json_users[key]['garmin_password'] = base64.b64encode(
             json_users[key]['garmin_password'].encode('utf-8')
         ).decode('utf-8')
-      json.dump(
-          {'lang': lang, 'users': json_users, 'measurement_history': measurement_history},
-          f,
-      )
+      #json.dump(
+      #    {'lang': lang, 'users': json_users, 'measurement_history': measurement_history},
+      #    f,
+      #)
+      json.dump({'lang': lang, 'users': json_users},f)
   except (PermissionError, IOError, OSError) as e:
     print('[bmconnect:_write_config] Error: ', e)
 
@@ -170,8 +173,46 @@ def _get_all_measurements():
     return None
 
 
-def _get_measurement_hash(measurement: dict) -> int:
+def _get_measurement_hash(measurement: dict) -> str:
+  # ignore user for hash. The user cannot be retrieved back from Garmin Connect
+  measurement['user']=0
+  # ignore calculated fields.
+  # They have little to no added value for the hash and are difficult to 
+  # retrieved back from Garmin Connect, because we don't know of language settings have changed
+  measurement['irregular heart beat']=False
+  measurement['risk index']=0
+  measurement['recommendation']=''
   return hashlib.sha256(json.dumps(measurement, sort_keys=True).encode('utf-8')).hexdigest()
+
+
+def _get_measurement_hashes_from_gc(gc: Garmin, dayspan=max_age_days) -> [str]:
+  if not gc:
+    return None
+
+  date_end = datetime.today().strftime('%Y-%m-%d')
+  date_start = (datetime.today() - timedelta(days=dayspan)).strftime('%Y-%m-%d')
+  gc_measurements = gc.get_blood_pressure(date_start, date_end)
+  hashes = []
+  # extract measurements from garmin structure
+  for measurementSummarie in gc_measurements['measurementSummaries']:
+    for measurement in measurementSummarie['measurements']:
+      m=beurerbm.get_empty_measurement()
+      m['systolic']=measurement['systolic']
+      m['diastolic']=measurement['diastolic']
+      m['pulse rate']=measurement['pulse']
+      dt=datetime.fromisoformat(measurement['measurementTimestampLocal'])
+      m['day']=dt.day
+      m['month']=dt.month
+      m['year']=dt.year
+      m['hour']=dt.hour
+      m['minute']=dt.minute
+      m['user']=0
+      #ignored by hash, so not worth parsing back
+      m['irregular heart beat']=False
+      m['risk index']=-1
+      m['recommendation']=''
+      hashes.append(_get_measurement_hash(m))
+  return hashes
 
 
 def _get_args():
@@ -248,11 +289,21 @@ def main():
   measurements = _get_all_measurements()
   if measurements:
     print(f'{len(measurements)} {text["info_measurements_read"][lang]}')
-    gc = None
+    gc = _init_garmin_connect()
+    # get measurements already uploaded to Garmin Connect
+    measurement_history_from_gc = _get_measurement_hashes_from_gc(gc)
+    # merge online history with local history
+    #measurement_history.extend([m for m in measurement_history_from_gc if m not in measurement_history])
     count = 0
+    today = date.today()
     for m in measurements:
+      m_date = date(m['year'], m['month'], m['day'])
+      if (today - m_date).days > max_age_days:
+        # skip this outdated entry
+        continue
       m_hash = _get_measurement_hash(m)
-      if m_hash not in measurement_history and (
+      #if m_hash not in measurement_history and (
+      if m_hash not in measurement_history_from_gc and (
           ignore_measurement_user_id or m['user'] == 0 or m['user'] == beurer_user_id
       ):
         if not gc:
@@ -263,12 +314,16 @@ def main():
         timestamp = datetime(
             m['year'], m['month'], m['day'], m['hour'], m['minute'], 0, 0
         ).isoformat()
-        notes = f'{text["arrhythmia recognized"][lang]}\n' if m['irregular heart beat'] else ''
-        notes += (
+        notes = ''
+        if m['irregular heart beat']:
+          notes +=f'{text["arrhythmia recognized"][lang]}\n'
+        if m["risk index"] in range(0,7):
+          notes += (
             f'{text["info_risk"][lang]}: {m["risk index"]} -'
             f' {text[beurerbm.BeurerBM.risk_classification[m["risk index"]]["id"]][lang]}\n'
-        )
-        notes += f'{text["Recommendation"][lang]}: {text[m["recommendation"]][lang]}'
+          )
+        if m["recommendation"]:
+          notes += f'{text["Recommendation"][lang]}: {text[m["recommendation"]][lang]}'
         gc.set_blood_pressure(
             m['systolic'], m['diastolic'], m['pulse rate'], timestamp, notes=notes
         )
@@ -276,8 +331,8 @@ def main():
         print(f"{timestamp}: {m['systolic']}/{m['diastolic']} {m['pulse rate']}")
         count += 1
     print(f'{count} {text["info_measurements_uploaded"][lang]}')
-    if len(measurement_history) > max_history_entries:
-      del measurement_history[: len(measurement_history) - max_history_entries]
+    #if len(measurement_history) > max_history_entries:
+    #  del measurement_history[: len(measurement_history) - max_history_entries]
   _write_config()
 
 
