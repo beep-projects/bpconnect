@@ -42,8 +42,8 @@ beurer_user_id = default_beurer_user_id
 ignore_measurement_user_id = False
 lang = 'en'
 max_age_days = 90
-#max_history_entries = 200
-#measurement_history = []
+# max_history_entries = 200
+# measurement_history = []
 # blood_pressure_rating =
 
 
@@ -118,7 +118,7 @@ def _read_config():
   global lang
   global users
   global default_beurer_user_id
-  #global measurement_history
+  # global measurement_history
   print(f'[bmconnect:_read_config] {conf_file}')
   try:
     with conf_file.open() as f:
@@ -130,7 +130,7 @@ def _read_config():
         users[key]['garmin_password'] = base64.b64decode(users[key]['garmin_password']).decode(
             'utf-8'
         )
-      #measurement_history = config.get('measurement_history', [])
+      # measurement_history = config.get('measurement_history', [])
   except FileNotFoundError:
     # if the file does not exist, it will be created with default values
     pass
@@ -146,11 +146,13 @@ def _write_config():
         json_users[key]['garmin_password'] = base64.b64encode(
             json_users[key]['garmin_password'].encode('utf-8')
         ).decode('utf-8')
-      #json.dump(
+      # json.dump(
       #    {'lang': lang, 'users': json_users, 'measurement_history': measurement_history},
       #    f,
-      #)
-      json.dump({'lang': lang, 'default_beurer_user_id': default_beurer_user_id, 'users': json_users},f)
+      # )
+      json.dump(
+          {'lang': lang, 'default_beurer_user_id': default_beurer_user_id, 'users': json_users}, f
+      )
   except (PermissionError, IOError, OSError) as e:
     print('[bmconnect:_write_config] Error: ', e)
 
@@ -179,13 +181,13 @@ def _get_all_measurements():
 def _get_measurement_hash(measurement: dict) -> str:
   m = measurement.copy()
   # ignore user for hash. The user cannot be retrieved back from Garmin Connect
-  m['user']=0
+  m['user'] = 0
   # ignore calculated fields.
-  # They have little to no added value for the hash and are difficult to 
+  # They have little to no added value for the hash and are difficult to
   # retrieved back from Garmin Connect, because we don't know of language settings have changed
-  m['irregular heart beat']=False
-  m['risk index']=0
-  m['recommendation']=''
+  m['irregular heart beat'] = False
+  m['risk index'] = 0
+  m['recommendation'] = ''
   return hashlib.sha256(json.dumps(m, sort_keys=True).encode('utf-8')).hexdigest()
 
 
@@ -198,23 +200,23 @@ def _get_measurement_hashes_from_gc(gc: Garmin, dayspan=max_age_days) -> [str]:
   gc_measurements = gc.get_blood_pressure(date_start, date_end)
   hashes = []
   # extract measurements from garmin structure
-  for measurementSummarie in gc_measurements['measurementSummaries']:
-    for measurement in measurementSummarie['measurements']:
-      m=beurerbm.get_empty_measurement()
-      m['systolic']=measurement['systolic']
-      m['diastolic']=measurement['diastolic']
-      m['pulse rate']=measurement['pulse']
-      dt=datetime.fromisoformat(measurement['measurementTimestampLocal'])
-      m['day']=dt.day
-      m['month']=dt.month
-      m['year']=dt.year
-      m['hour']=dt.hour
-      m['minute']=dt.minute
-      m['user']=0
-      #ignored by hash, so not worth parsing back
-      m['irregular heart beat']=False
-      m['risk index']=-1
-      m['recommendation']=''
+  for measurement_summary in gc_measurements['measurementSummaries']:
+    for measurement in measurement_summary['measurements']:
+      m = beurerbm.get_empty_measurement()
+      m['systolic'] = measurement['systolic']
+      m['diastolic'] = measurement['diastolic']
+      m['pulse rate'] = measurement['pulse']
+      dt = datetime.fromisoformat(measurement['measurementTimestampLocal'])
+      m['day'] = dt.day
+      m['month'] = dt.month
+      m['year'] = dt.year
+      m['hour'] = dt.hour
+      m['minute'] = dt.minute
+      m['user'] = 0
+      # ignored by hash, so not worth parsing back
+      m['irregular heart beat'] = False
+      m['risk index'] = -1
+      m['recommendation'] = ''
       hashes.append(_get_measurement_hash(m))
   return hashes
 
@@ -222,59 +224,55 @@ def _get_measurement_hashes_from_gc(gc: Garmin, dayspan=max_age_days) -> [str]:
 def _get_args():
   parser = argparse.ArgumentParser(add_help=False)
   parser.add_argument(
-    '-h',
-    '--help',
-    action='help',
-    default=argparse.SUPPRESS,
-    help=text['help_help'][lang]
+      '-h', '--help', action='help', default=argparse.SUPPRESS, help=text['help_help'][lang]
   )
   parser.add_argument(
-    '-l',
-    '--login',
-    dest='login',
-    required=False,
-    action='store_true',
-    help=text['help_login'][lang]
+      '-l',
+      '--login',
+      dest='login',
+      required=False,
+      action='store_true',
+      help=text['help_login'][lang],
   )
   parser.add_argument(
-    '-u',
-    '--user',
-    dest='user',
-    metavar='{1, ..., 255}',
-    required=False,
-    type=int,
-    choices=range(1, 256),
-    action='store',
-    help=text['help_user'][lang]
+      '-u',
+      '--user',
+      dest='user',
+      metavar='{1, ..., 255}',
+      required=False,
+      type=int,
+      choices=range(1, 256),
+      action='store',
+      help=text['help_user'][lang],
   )
   parser.add_argument(
-    '-du',
-    '--default_user',
-    dest='default_user',
-    metavar='{1, ..., 255}',
-    required=False,
-    type=int,
-    choices=range(1, 256),
-    action='store',
-    help=text['help_default_user'][lang]
+      '-du',
+      '--default_user',
+      dest='default_user',
+      metavar='{1, ..., 255}',
+      required=False,
+      type=int,
+      choices=range(1, 256),
+      action='store',
+      help=text['help_default_user'][lang],
   )
   parser.add_argument(
-    '-i',
-    '--ignore',
-    dest='ignore_measurement_user_id',
-    required=False,
-    action='store_true',
-    help=text['help_ignore'][lang]
+      '-i',
+      '--ignore',
+      dest='ignore_measurement_user_id',
+      required=False,
+      action='store_true',
+      help=text['help_ignore'][lang],
   )
   parser.add_argument(
-    '-lc',
-    '--language',
-    dest='lang',
-    required=False,
-    type=str.lower,
-    choices=text_lang,
-    action='store',
-    help=text['help_language'][lang]
+      '-lc',
+      '--language',
+      dest='lang',
+      required=False,
+      type=str.lower,
+      choices=text_lang,
+      action='store',
+      help=text['help_language'][lang],
   )
   args = parser.parse_args()
   return args
@@ -311,8 +309,6 @@ def main():
     gc = _init_garmin_connect()
     # get measurements already uploaded to Garmin Connect
     measurement_history_from_gc = _get_measurement_hashes_from_gc(gc)
-    # merge online history with local history
-    #measurement_history.extend([m for m in measurement_history_from_gc if m not in measurement_history])
     count = 0
     today = date.today()
     for m in measurements:
@@ -321,7 +317,6 @@ def main():
         # skip this outdated entry
         continue
       m_hash = _get_measurement_hash(m)
-      #if m_hash not in measurement_history and (
       if m_hash not in measurement_history_from_gc and (
           ignore_measurement_user_id or m['user'] == 0 or m['user'] == beurer_user_id
       ):
@@ -335,23 +330,20 @@ def main():
         ).isoformat()
         notes = ''
         if m['irregular heart beat']:
-          notes +=f'{text["arrhythmia recognized"][lang]}\n'
-        if m["risk index"] in range(0,7):
+          notes += f'{text["arrhythmia recognized"][lang]}\n'
+        if m['risk index'] in range(0, 7):
           notes += (
-            f'{text["info_risk"][lang]}: {m["risk index"]} -'
-            f' {text[beurerbm.BeurerBM.risk_classification[m["risk index"]]["id"]][lang]}\n'
+              f'{text["info_risk"][lang]}: {m["risk index"]} -'
+              f' {text[beurerbm.BeurerBM.risk_classification[m["risk index"]]["id"]][lang]}\n'
           )
-        if m["recommendation"]:
+        if m['recommendation']:
           notes += f'{text["Recommendation"][lang]}: {text[m["recommendation"]][lang]}'
         gc.set_blood_pressure(
             m['systolic'], m['diastolic'], m['pulse rate'], timestamp, notes=notes
         )
-        #measurement_history.append(m_hash)
         print(f"{timestamp}: {m['systolic']}/{m['diastolic']} {m['pulse rate']}")
         count += 1
     print(f'{count} {text["info_measurements_uploaded"][lang]}')
-    #if len(measurement_history) > max_history_entries:
-    #  del measurement_history[: len(measurement_history) - max_history_entries]
   _write_config()
 
 

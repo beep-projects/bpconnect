@@ -423,18 +423,20 @@ def get_empty_measurement() -> dict[str, any] | None:
     'risk index' = WHO risk assessment for this measurement
     'recommendation' = recommendation to take action based on risk index
   """
-  return {'systolic':-1,
-          'diastolic':-1,
-          'pulse rate':-1,
-          'day':-1,
-          'month':-1,
-          'year':-1,
-          'hour':-1,
-          'minute':-1,
-          'user':-1,
-          'irregular heart beat':False,
-          'risk index':-1,
-          'recommendation':''}
+  return {
+      'systolic': -1,
+      'diastolic': -1,
+      'pulse rate': -1,
+      'day': -1,
+      'month': -1,
+      'year': -1,
+      'hour': -1,
+      'minute': -1,
+      'user': -1,
+      'irregular heart beat': False,
+      'risk index': -1,
+      'recommendation': '',
+  }
 
 
 def find(device: str = None, timeout: int = 10) -> BeurerBM:
