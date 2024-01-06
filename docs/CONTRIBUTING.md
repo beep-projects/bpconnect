@@ -1,10 +1,11 @@
-<div align="center">
-<img src="resources/VASpberryPi_Banner.png" alt="VASpberryPi" style="width:100%;"/>
-</div>
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="../resources/bmconnect_banner_dark.png">
+  <img alt="bm+connect" src="../resources/bmconnect_banner.png">
+</picture>
 
 
 # How to contribute to bmconnect
-<sup>\[[Back to README](README.md)\]</sup>
+<sup>\[[Back to README](../README.md)\]</sup>
 
 Great that you're reading this, because every volunteer is truly welcome to improve this project. This page shall help you to get the needed information on how you can contribute. If you do not find the needed information on this page, just [open a new discussion](https://github.com/beep-projects/bmconnect/discussions/new/choose) for that topic.
 ## Contents
@@ -39,5 +40,5 @@ pylint --rcfile .github/workflows/pylintrc [your_file.py]
 
 - If you have collected positive feedback in the [Discussions](https://github.com/beep-projects/bmconnect/discussions) and finished your work, [open a new pull request](https://github.com/beep-projects/bmconnect/compare) with the patch.
 
-<sup>\[[Back to README](README.md)\] \[[Back to top](#how-to-contribute-to-bmconnect)\]</sup>
+<sup>\[[Back to README](../README.md)\] \[[Back to top](#how-to-contribute-to-bmconnect)\]</sup>
 

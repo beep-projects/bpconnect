@@ -119,7 +119,7 @@ def _read_config():
   global users
   global default_beurer_user_id
   # global measurement_history
-  print(f'[bmconnect:_read_config] {conf_file}')
+  #print(f'[bmconnect:_read_config] {conf_file}')
   try:
     with conf_file.open() as f:
       config = json.load(f)

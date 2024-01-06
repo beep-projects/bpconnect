@@ -4,7 +4,7 @@ Description=Service called from 99-beurerXXXX.rules to run bmconnect.py on devic
 [Service]
 Type=oneshot
 ExecStartPre=/bin/sleep 1
-ExecStart=[path to python venv]/python3 [path to script]/bmconnect.py
+ExecStart=[path to python venv]/bin/python3 [path to script]/bmconnect.py
 Restart=no
 
 [Install]
