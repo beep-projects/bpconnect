@@ -8,7 +8,11 @@
   <sup>\[[Usage](#usage)\] \[[Installation](#installation)\] \[[Contribute](#contribute)\] \[[Usage](#usage)\] \[[Report bugs](https://github.com/beep-projects/bmconnect/issues)\] \[[Feedback](https://github.com/beep-projects/bmconnect/discussions)\]</sup>  
 
 # bmconnect
-`bmconnect.py` is a python script to upload measurements from a [Beurer BM58](https://www.beurer.com/uk/p/65516/#overview--anchor) blood pressure meter to a [Garmin Connect](https://connect.garmin.com) account.  
+`bmconnect.py` is a python script to upload measurements from a [Beurer BM58](https://www.beurer.com/uk/p/65516/#overview--anchor) blood pressure meter to a [Garmin Connect](https://connect.garmin.com) account. Each measurement is annotated with risk grading  and recommendation for action, to support you in understanding the data.  
+<img src="resources/connect_app_overview.png" alt="Blood pressure daily overview" style="width:200px;"/> <img src="resources/connect_app_notes.png" alt="Notes added to the measurements" style="width:200px"/>  
+
+[ ![](resources/connect_app_overview.png) ](resources/connect_app_notes.png)
+
 If you want to get support for other devices, read the [Contribute](#Contribute) section.  
 Currently I only own a Beurer BM58, wich connects under Linux as HID device `ID 0c45:7406 Microdia USB Device`.
 There exist other versions of this device, which use the USB-Serial Controller `pl2303` and connect as ttyUSB device. Support for that version is copied from other projects and not tested. Please give it a try if you own such a device and send feedback.
