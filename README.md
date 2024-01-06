@@ -5,11 +5,7 @@
 
 [![GitHub license](https://img.shields.io/github/license/beep-projects/bmconnect)](https://github.com/beep-projects/bmconnect/blob/main/LICENSE) [![Pylint](https://github.com/beep-projects/bmconnect/actions/workflows/pylint.yml/badge.svg)](https://github.com/beep-projects/bmconnect/actions/workflows/pylint.yml) [![GitHub issues](https://img.shields.io/github/issues/beep-projects/bmconnect)](https://github.com/beep-projects/bmconnect/issues) [![GitHub forks](https://img.shields.io/github/forks/beep-projects/bmconnect)](https://github.com/beep-projects/bmconnect/network) [![GitHub stars](https://img.shields.io/github/stars/beep-projects/bmconnect)](https://github.com/beep-projects/bmconnect/stargazers) ![GitHub repo size](https://img.shields.io/github/repo-size/beep-projects/bmconnect) ![visitors](https://visitor-badge.glitch.me/badge?page_id=beep-projects.bmconnect)
 
-<div align="center">
   <sup>\[[Usage](#usage)\] \[[Installation](#installation)\] \[[Contribute](#contribute)\] \[[Usage](#usage)\] \[[Report bugs](https://github.com/beep-projects/bmconnect/issues)\] \[[Feedback](https://github.com/beep-projects/bmconnect/discussions)\]</sup>  
-
-  🕫
-</div>
 
 # bmconnect
 `bmconnect.py` is a python script to upload measurements from a [Beurer BM58](https://www.beurer.com/uk/p/65516/#overview--anchor) blood pressure meter to a [Garmin Connect](https://connect.garmin.com) account.  
@@ -90,23 +86,23 @@ sudo cp bmconnect.service /etc/systemd/system
 sudo systemctl daemon-reload
 ```
 ### Install udev rule to call the service
-Finally, you need to tell udev to start the service, everytime a Beurer device is plugged in
+Finally, you need to tell udev to start the service, whenever a Beurer device is plugged in
 ```bash
 sudo cp 99-beurerBM58.rules /etc/udev/rules.d/
 ```
 ### Done
-udev should load the rules automatically, so just plugin your Beurer device and check
+udev should load the rules file automatically, so you can simply plugin your Beurer device and check if there is new data in your Garmin Connect account.
 
 ### Debugging
-debugging udev and services is tricky, so I advice to first run the script in your python environment as described above. If everything looks good on that level, you can watch the syslog, while you plugin your device.
+debugging udev and services is tricky, so I advice you to first run the script in your python environment as described above. If everything looks good on that level, you can continue to install the .rules and .service files and watch the syslog, while you plugin your device.
 ```bash
 tail -f /var/log/syslog
 ```
 
 ## Contribute
-If you want to contribute to the project, I have created a small [Contributing Guide](docs/CONTRIBUTING.md). To keep it short, it is best if you simply open a new [Discussion](https://github.com/beep-projects/bmconnect/discussions) and talk about what you are up to, or where you need help.
+If you want to contribute to this project, please read [Contributing Guide](docs/CONTRIBUTING.md). To keep it short, it is best if you simply open a new [Discussion](https://github.com/beep-projects/bmconnect/discussions) and talk about what you want to do, or where you need help.
 
-The language support is just adde out of couriosity on how this could be done without using a big framework. So the translations are actually all done by an online translator. Feel free to improve the texts or add a new language in [bmconnect_i18n.py](bmconnect_i18n.py)
+The language support is just added out of couriosity on how this could be done without using a big framework. So the translations are actually all done by an online translator. Feel free to improve the texts or add a new language in [bmconnect_i18n.py](bmconnect_i18n.py)
 
 If you want to add support for another Beurer device, you can register at https://connect.beurer.com/developer/ and get access to the documentation of communication protocols. The needed code changes can be talked about in the [Discussions](https://github.com/beep-projects/bmconnect/discussions).
 
