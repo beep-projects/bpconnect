@@ -5,13 +5,12 @@
 
 [![GitHub license](https://img.shields.io/github/license/beep-projects/bmconnect)](https://github.com/beep-projects/bmconnect/blob/main/LICENSE) [![Pylint](https://github.com/beep-projects/bmconnect/actions/workflows/pylint.yml/badge.svg)](https://github.com/beep-projects/bmconnect/actions/workflows/pylint.yml) [![GitHub issues](https://img.shields.io/github/issues/beep-projects/bmconnect)](https://github.com/beep-projects/bmconnect/issues) [![GitHub forks](https://img.shields.io/github/forks/beep-projects/bmconnect)](https://github.com/beep-projects/bmconnect/network) [![GitHub stars](https://img.shields.io/github/stars/beep-projects/bmconnect)](https://github.com/beep-projects/bmconnect/stargazers) ![GitHub repo size](https://img.shields.io/github/repo-size/beep-projects/bmconnect) [![Scc Count Badge](https://sloc.xyz/github/beep-projects/bmconnect/?category=code)](https://github.com/beep-projects/bmconnect/) [![Scc Count Badge](https://sloc.xyz/github/beep-projects/bmconnect/?category=blanks)](https://github.com/beep-projects/bmconnect/) [![Scc Count Badge](https://sloc.xyz/github/beep-projects/bmconnect/?category=lines)](https://github.com/beep-projects/bmconnect/) [![Scc Count Badge](https://sloc.xyz/github/beep-projects/bmconnect/?category=comments)](https://github.com/beep-projects/bmconnect/) [![Scc Count Badge](https://sloc.xyz/github/beep-projects/bmconnect/?category=cocomo)](https://github.com/beep-projects/bmconnect/)
 
-  <sup>\[[Usage](#usage)\] \[[Installation](#installation)\] \[[Contribute](#contribute)\] \[[Usage](#usage)\] \[[Report bugs](https://github.com/beep-projects/bmconnect/issues)\] \[[Feedback](https://github.com/beep-projects/bmconnect/discussions)\]</sup>  
+  <sup>\[[Usage](#usage)\] \[[Installation](#installation)\] \[[Contribute](#contribute)\] \[[Report bugs](https://github.com/beep-projects/bmconnect/issues)\] \[[Feedback](https://github.com/beep-projects/bmconnect/discussions)\]</sup>  
 
 # bmconnect
 `bmconnect.py` is a python script to upload measurements from a [Beurer BM58](https://www.beurer.com/uk/p/65516/#overview--anchor) blood pressure meter to a [Garmin Connect](https://connect.garmin.com) account. Each measurement is annotated with risk grading  and recommendation for action, to support you in understanding the data.  
-<img src="resources/connect_app_overview.png" alt="Blood pressure daily overview" style="width:200px;"/> <img src="resources/connect_app_notes.png" alt="Notes added to the measurements" style="width:200px"/>  
 
-[ ![](resources/connect_app_overview.png) ](resources/connect_app_notes.png)
+<img src="resources/connect_app_overview.png" alt="Blood pressure daily overview" style="width:250px;"/> <img src="resources/connect_app_notes.png" alt="Notes added to the measurements" style="width:250px"/>  
 
 If you want to get support for other devices, read the [Contribute](#Contribute) section.  
 Currently I only own a Beurer BM58, wich connects under Linux as HID device `ID 0c45:7406 Microdia USB Device`.
