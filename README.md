@@ -3,7 +3,7 @@
   <img alt="bm+connect" src="resources/bmconnect_banner.png">
 </picture>
 
-[![GitHub license](https://img.shields.io/github/license/beep-projects/bmconnect)](https://github.com/beep-projects/bmconnect/blob/main/LICENSE) [![Pylint](https://github.com/beep-projects/bmconnect/actions/workflows/pylint.yml/badge.svg)](https://github.com/beep-projects/bmconnect/actions/workflows/pylint.yml) [![GitHub issues](https://img.shields.io/github/issues/beep-projects/bmconnect)](https://github.com/beep-projects/bmconnect/issues) [![GitHub forks](https://img.shields.io/github/forks/beep-projects/bmconnect)](https://github.com/beep-projects/bmconnect/network) [![GitHub stars](https://img.shields.io/github/stars/beep-projects/bmconnect)](https://github.com/beep-projects/bmconnect/stargazers) ![GitHub repo size](https://img.shields.io/github/repo-size/beep-projects/bmconnect) ![visitors](https://visitor-badge.glitch.me/badge?page_id=beep-projects.bmconnect)
+[![GitHub license](https://img.shields.io/github/license/beep-projects/bmconnect)](https://github.com/beep-projects/bmconnect/blob/main/LICENSE) [![Pylint](https://github.com/beep-projects/bmconnect/actions/workflows/pylint.yml/badge.svg)](https://github.com/beep-projects/bmconnect/actions/workflows/pylint.yml) [![GitHub issues](https://img.shields.io/github/issues/beep-projects/bmconnect)](https://github.com/beep-projects/bmconnect/issues) [![GitHub forks](https://img.shields.io/github/forks/beep-projects/bmconnect)](https://github.com/beep-projects/bmconnect/network) [![GitHub stars](https://img.shields.io/github/stars/beep-projects/bmconnect)](https://github.com/beep-projects/bmconnect/stargazers) ![GitHub repo size](https://img.shields.io/github/repo-size/beep-projects/bmconnect) [![Scc Count Badge](https://sloc.xyz/github/beep-projects/bmconnect/?category=code)](https://github.com/beep-projects/bmconnect/) [![Scc Count Badge](https://sloc.xyz/github/beep-projects/bmconnect/?category=blanks)](https://github.com/beep-projects/bmconnect/) [![Scc Count Badge](https://sloc.xyz/github/beep-projects/bmconnect/?category=lines)](https://github.com/beep-projects/bmconnect/) [![Scc Count Badge](https://sloc.xyz/github/beep-projects/bmconnect/?category=comments)](https://github.com/beep-projects/bmconnect/) [![Scc Count Badge](https://sloc.xyz/github/beep-projects/bmconnect/?category=cocomo)](https://github.com/beep-projects/bmconnect/)
 
   <sup>\[[Usage](#usage)\] \[[Installation](#installation)\] \[[Contribute](#contribute)\] \[[Usage](#usage)\] \[[Report bugs](https://github.com/beep-projects/bmconnect/issues)\] \[[Feedback](https://github.com/beep-projects/bmconnect/discussions)\]</sup>  
 
@@ -70,7 +70,7 @@ Now you can test if everything works fine for you. Plug in your device and execu
 ```bash
 venv/bin/python3 bmconnect.py
 ```
-### Done or patch bmconnect.service 
+### Done or continue and patch bmconnect.service 
 If the test was successful, you ar done, or you can continue to install it to run everytime you plug in your Beurer device.  
 For the autostart, you have to patch the provided `bmconnect.service` file, to use your current installation
 ```bash
