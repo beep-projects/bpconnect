@@ -45,9 +45,13 @@ options:
 ```
 
 ## Installation
-At the moment, I have tested this only on an Ububtu Linux, but the script should also run on other distributions or on Windows if python is installed. 
+At the moment, I have tested `bmconnect.py` only on an Ububtu Linux and Windows 11. On Ubuntu, I managed to run the script on USB plug in of the device, on Windows I could not figure out, how this could be achieved (USB events 400 and 410 seem not be usable as trigger in task scheduler).
 
-### Install the script and its dependencies
+### Installation on Ubuntu
+<details>
+<summary>Expand instructions</summary>
+
+#### Install the script and its dependencies
 ```bash
 git clone https://github.com/beep-projects/bmconnect/
 cd bmconnect
@@ -57,23 +61,23 @@ Create virtual python environment and get the required modules
 python3 -m venv venv
 venv/bin/pip3 install -r requirements.txt
 ```
-### Configure bmconnect
+#### Configure bmconnect
 Note, the config will be saved for the user running `bmconnect.py`, so if you intend to install bmconnect to be automatically run as soon as a device is plugged in, you have to run the following command as `sudo`.
 You need to configure `--login`, but you can also configure `--user` and `--language`.
 ```bash
 venv/bin/python3 bmconnect.py --login
 ```
-### Grant access to everyone
+#### Grant access to everyone
 On Linux, only the root user can access the device. By adding this rule to udev, you allow access for all users. This step is not needed, if you continue to setup the automated upload on device plugin.
 ```bash
 sudo cp 98-beurerBM58.rules /etc/udev/rules.d/
 ```
-### Test if everything works
+#### Test if everything works
 Now you can test if everything works fine for you. Plug in your device and execute `bmconnect.py`. Remember, if you ran the previous configuration with `sudo`, you also have to make this call as `sudo`
 ```bash
 venv/bin/python3 bmconnect.py
 ```
-### Done or continue and patch bmconnect.service 
+#### Done or continue and patch bmconnect.service 
 If the test was successful, you ar done, or you can continue to install it to run everytime you plug in your Beurer device.  
 For the autostart, you have to patch the provided `bmconnect.service` file, to use your current installation
 ```bash
@@ -82,25 +86,60 @@ For the autostart, you have to patch the provided `bmconnect.service` file, to u
 # by hand, or via
 sed -i "s|^ExecStart=.*|ExecStart="$(pwd)"\/venv\/bin/python3 "$(pwd)"\/bmconnect.py|" bmconnect.service
 ```
-### Install bmconnect.service to systemd
+#### Install bmconnect.service to systemd
 Now you need to install the bmconnect.service for systemd. You only need to copy it, but not enable it via `systemctl`, because this service should not run on startup.
 ```bash
 sudo cp bmconnect.service /etc/systemd/system
 sudo systemctl daemon-reload
 ```
-### Install udev rule to call the service
+#### Install udev rule to call the service
 Finally, you need to tell udev to start the service, whenever a Beurer device is plugged in
 ```bash
 sudo cp 99-beurerBM58.rules /etc/udev/rules.d/
 ```
-### Done
+#### Done
 udev should load the rules file automatically, so you can simply plugin your Beurer device and check if there is new data in your Garmin Connect account.
 
-### Debugging
+#### Debugging
 debugging udev and services is tricky, so I advice you to first run the script in your python environment as described above. If everything looks good on that level, you can continue to install the .rules and .service files and watch the syslog, while you plugin your device.
 ```bash
 tail -f /var/log/syslog
 ```
+</details>
+
+### Installation on Windows 11
+<details>
+<summary>Expand instructions</summary>
+
+#### Install python
+There are different ways to install Python on Windows. I started with this [guide](https://learn.microsoft.com/en-us/windows/python/scripting) and installed Python from the [Microsoft App Store](https://apps.microsoft.com/search?query=python). This ensures that you have the path variable set correctly,
+
+#### Get bmconnect code
+You can install [Git](https://git-scm.com/download/win) and clone the repo or download the (zipped repo)[https://github.com/beep-projects/bmconnect/archive/refs/heads/main.zip] and extract it. For the following it is assumed, that the bmconnect code is saved in *C:\git\bmconnect*
+
+#### Install dependencies and configure libusb
+Open the PowerShell and run
+```powershell
+cd C:\git\bmconnect\
+python3 -m venv venv
+.\venv\Scripts\pip3.exe install -r requirements.txt
+```
+#### Add libusb to $env:path
+On my installation the script was complaining about a missing backend for usb.core. That was because libusb was not available in the path variable.
+Adjust the following to match your installation:
+```powershell
+$env:path += ';C:\git\bmconnect\venv\Lib\site-packages\libusb\_platform\_windows\x64'
+[Environment]::SetEnvironmentVariable("path", $env:path, "User")
+```
+#### Configure bmconnect
+You need to configure `--login`, but you can also configure `--user` and `--language`.
+```bash
+C:\git\bmconnect\venv\Scripts\python.exe bmconnect.py --login
+```
+#### Done
+You can now create a shortcut to run the script from your desktop
+
+</details>
 
 ## Contribute
 If you want to contribute to this project, please read [Contributing Guide](docs/CONTRIBUTING.md). To keep it short, it is best if you simply open a new [Discussion](https://github.com/beep-projects/bmconnect/discussions) and talk about what you want to do, or where you need help.
