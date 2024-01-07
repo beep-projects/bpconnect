@@ -42,10 +42,11 @@ options:
                         multiple users on the device for selection.
   -lc {de,en,es,fr,it,pl,ru,tr}, --language {de,en,es,fr,it,pl,ru,tr}
                         Configures the language used by bmconnect. Especially for measurement notes uploaded to Garmin Connect. This option is saved.
+  -sl, --save-locally   Saves the read data locally so that it can be further processed with other tools. This option is saved.
 ```
 
 ## Installation
-At the moment, I have tested `bmconnect.py` only on an Ububtu Linux and Windows 11. On Ubuntu, I managed to run the script on USB plug in of the device, on Windows I could not figure out, how this could be achieved (USB events 400 and 410 seem not be usable as trigger in task scheduler).
+At the moment, I have tested `bmconnect.py` only on Ububtu 23.10 and Windows 11. On Ubuntu (and most likely any distribution using udev), the script runs triggered by the USB plug in of the device. On Windows I could not figure out, how this could be achieved (USB events 400 and 410 seem not be usable as trigger events in task scheduler).
 
 ### Installation on Ubuntu
 <details>
@@ -59,13 +60,13 @@ cd bmconnect
 Create virtual python environment and get the required modules
 ```bash
 python3 -m venv venv
-venv/bin/pip3 install -r requirements.txt
+./venv/bin/pip3 install -r requirements.txt
 ```
 #### Configure bmconnect
 Note, the config will be saved for the user running `bmconnect.py`, so if you intend to install bmconnect to be automatically run as soon as a device is plugged in, you have to run the following command as `sudo`.
 You need to configure `--login`, but you can also configure `--user` and `--language`.
 ```bash
-venv/bin/python3 bmconnect.py --login
+./venv/bin/python3 bmconnect.py --login
 ```
 #### Grant access to everyone
 On Linux, only the root user can access the device. By adding this rule to udev, you allow access for all users. This step is not needed, if you continue to setup the automated upload on device plugin.
@@ -75,11 +76,11 @@ sudo cp 98-beurerBM58.rules /etc/udev/rules.d/
 #### Test if everything works
 Now you can test if everything works fine for you. Plug in your device and execute `bmconnect.py`. Remember, if you ran the previous configuration with `sudo`, you also have to make this call as `sudo`
 ```bash
-venv/bin/python3 bmconnect.py
+./venv/bin/python3 bmconnect.py
 ```
 #### Done or continue and patch bmconnect.service 
-If the test was successful, you ar done, or you can continue to install it to run everytime you plug in your Beurer device.  
-For the autostart, you have to patch the provided `bmconnect.service` file, to use your current installation
+If the test was successful, you ar done, or you can continue to install it to run everytime you plug in the USB device.  
+For the autostart, you have to patch the provided `bmconnect.service` file, to use your current installation. If you want to use options like ```--ignore``` you have to add it to the command in the service file.
 ```bash
 # edit this line: 
 # ExecStart=[path to python venv]/bin/python3 [path to script]/bmconnect.py
@@ -87,7 +88,7 @@ For the autostart, you have to patch the provided `bmconnect.service` file, to u
 sed -i "s|^ExecStart=.*|ExecStart="$(pwd)"\/venv\/bin/python3 "$(pwd)"\/bmconnect.py|" bmconnect.service
 ```
 #### Install bmconnect.service to systemd
-Now you need to install the bmconnect.service for systemd. You only need to copy it, but not enable it via `systemctl`, because this service should not run on startup.
+Now you need to install the `bmconnect.service` for systemd. You only need to copy it, but not enable it via `systemctl`, because this service should not run on startup.
 ```bash
 sudo cp bmconnect.service /etc/systemd/system
 sudo systemctl daemon-reload
@@ -111,13 +112,13 @@ tail -f /var/log/syslog
 <details>
 <summary>Expand instructions</summary>
 
-#### Install python
+#### Install Python
 There are different ways to install Python on Windows. The following instructions are based on this [guide](https://learn.microsoft.com/en-us/windows/python/scripting) which installes Python from the [Microsoft App Store](https://apps.microsoft.com/search?query=python). This ensures that you have the path variable set correctly.
 
 #### Get bmconnect code
-You can install [Git](https://git-scm.com/download/win) and clone the repo or download the [zipped repo](https://github.com/beep-projects/bmconnect/archive/refs/heads/main.zip) and extract it. For the following it is assumed, that the bmconnect code is saved in *C:\git\bmconnect*
+You can install [Git](https://git-scm.com/download/win) and clone the repo or download the [zipped repo](https://github.com/beep-projects/bmconnect/archive/refs/heads/main.zip) and extract it. For the following it is assumed, that the bmconnect code is saved in **C:\git\bmconnect**
 
-#### Install dependencies and configure libusb
+#### Install dependencies
 Open the PowerShell and run
 ```powershell
 cd C:\git\bmconnect\

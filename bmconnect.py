@@ -31,16 +31,19 @@ from garth.exc import GarthHTTPError
 from garminconnect import Garmin, GarminConnectAuthenticationError
 from getpass import getpass
 import json
-import requests
+import pandas as pd
 from pathlib import Path
+import requests
 
-conf_folder = Path.home() / '.config' / 'bmconnect'
-conf_file = conf_folder / 'conf.json'
+data_folder = Path.home() / '.bmconnect'
+conf_file = data_folder / 'conf.json'
+data_file = data_folder / 'measurements.feather'
 users = {}
 default_beurer_user_id = 1
 beurer_user_id = default_beurer_user_id
 ignore_measurement_user_id = False
 lang = 'en'
+save_locally = False
 max_age_days = 90
 # max_history_entries = 200
 # measurement_history = []
@@ -71,7 +74,7 @@ def _init_garmin_connect():
   """Initialize connection to Garmin Connect with your credentials."""
 
   try:
-    tokenfolder = conf_folder / f'oauth{beurer_user_id}'
+    tokenfolder = data_folder / f'oauth{beurer_user_id}'
     print(f'{text["info_trying_gc_login"][lang]} "{tokenfolder}"...')
     garmin = Garmin()
     garmin.login(tokenfolder)
@@ -84,13 +87,13 @@ def _init_garmin_connect():
     print(text['info_login_failed_trying_email_pw'][lang])
     try:
       credentials = users.get(str(beurer_user_id))
-      print(f'credentials found in config: {credentials}')
       if credentials is None:
         # garmin_email, garmin_password = _get_credentials()
         # Save tokens for next login
         # _write_config()
         print(f'[bmconnect:_init_garmin_connect] Error: {text["error_no_credentials"][lang]}')
         return None
+      print(text['info_found_credentials_in_config'][lang])
       garmin = Garmin(credentials['garmin_email'], credentials['garmin_password'])
       garmin.login()
       # Save tokens for next login
@@ -118,6 +121,7 @@ def _read_config():
   global lang
   global users
   global default_beurer_user_id
+  global save_locally
   # global measurement_history
   #print(f'[bmconnect:_read_config] {conf_file}')
   try:
@@ -125,6 +129,7 @@ def _read_config():
       config = json.load(f)
       lang = config.get('lang', 'en')
       default_beurer_user_id = config.get('default_beurer_user_id', 1)
+      save_locally = config.get('save_locally', False)
       users = config.get('users', {})
       for key in users:
         users[key]['garmin_password'] = base64.b64decode(users[key]['garmin_password']).decode(
@@ -139,19 +144,15 @@ def _read_config():
 def _write_config():
   try:
     # make sure the conf folder exists
-    conf_folder.mkdir(parents=True, exist_ok=True)
+    data_folder.mkdir(parents=True, exist_ok=True)
     with conf_file.open('w') as f:
       json_users = copy.deepcopy(users)  # shallow copy is not enough
       for key in json_users:
         json_users[key]['garmin_password'] = base64.b64encode(
             json_users[key]['garmin_password'].encode('utf-8')
         ).decode('utf-8')
-      # json.dump(
-      #    {'lang': lang, 'users': json_users, 'measurement_history': measurement_history},
-      #    f,
-      # )
       json.dump(
-          {'lang': lang, 'default_beurer_user_id': default_beurer_user_id, 'users': json_users}, f
+          {'lang': lang, 'default_beurer_user_id': default_beurer_user_id, 'save_locally': save_locally, 'users': json_users}, f
       )
   except (PermissionError, IOError, OSError) as e:
     print('[bmconnect:_write_config] Error: ', e)
@@ -220,6 +221,58 @@ def _get_measurement_hashes_from_gc(gc: Garmin, dayspan=max_age_days) -> [str]:
       hashes.append(_get_measurement_hash(m))
   return hashes
 
+def _sync_measurements_to_gc(measurements):
+    gc = _init_garmin_connect()
+    # get measurements already uploaded to Garmin Connect
+    measurement_history_from_gc = _get_measurement_hashes_from_gc(gc)
+    count = 0
+    today = date.today()
+    for m in measurements:
+      m_date = date(m['year'], m['month'], m['day'])
+      if (today - m_date).days > max_age_days:
+        # skip this outdated entry
+        continue
+      m_hash = _get_measurement_hash(m)
+      if m_hash not in measurement_history_from_gc and (
+          ignore_measurement_user_id or m['user'] == 0 or m['user'] == beurer_user_id
+      ):
+        if not gc:
+          gc = _init_garmin_connect()
+          if not gc:
+            break
+        # only work on measurements that are not already uploaded
+        timestamp = datetime(
+            m['year'], m['month'], m['day'], m['hour'], m['minute'], 0, 0
+        ).isoformat()
+        notes = ''
+        if m['irregular heart beat']:
+          notes += f'{text["arrhythmia recognized"][lang]}\n'
+        if m['risk index'] in range(0, 7):
+          notes += (
+              f'{text["info_risk"][lang]}: {m["risk index"]} -'
+              f' {text[beurerbm.BeurerBM.risk_classification[m["risk index"]]["id"]][lang]}\n'
+          )
+        if m['recommendation']:
+          notes += f'{text["Recommendation"][lang]}: {text[m["recommendation"]][lang]}'
+        gc.set_blood_pressure(
+            m['systolic'], m['diastolic'], m['pulse rate'], timestamp, notes=notes
+        )
+        print(f"{timestamp}: {m['systolic']}/{m['diastolic']} {m['pulse rate']}")
+        count += 1
+    print(f'{count} {text["info_measurements_uploaded"][lang]}')
+
+
+def _save_measurements_locally(measurements):
+  # load data_file
+  try:
+    df = pd.read_feather(data_file)
+  except FileNotFoundError:
+    df = pd.DataFrame()
+  count = len(df)
+  df = pd.concat([df, pd.DataFrame(measurements)]).drop_duplicates()
+  count = len(df) - count
+  df.to_feather(data_file)
+  print(f'{count} {text["info_measurements_added"][lang]} {data_file}')
 
 def _get_args():
   parser = argparse.ArgumentParser(add_help=False)
@@ -273,6 +326,14 @@ def _get_args():
       choices=text_lang,
       action='store',
       help=text['help_language'][lang],
+  ),
+  parser.add_argument(
+      '-sl',
+      '--save-locally',
+      dest='save_locally',
+      required=False,
+      action='store_true',
+      help=text['help_save_locally'][lang],
   )
   args = parser.parse_args()
   return args
@@ -283,6 +344,7 @@ def main():
   global beurer_user_id
   global ignore_measurement_user_id
   global lang
+  global save_locally
   _read_config()
   args = _get_args()
 
@@ -300,50 +362,18 @@ def main():
   if args.lang:
     lang = args.lang
 
+  if args.save_locally:
+    save_locally = args.save_locally
+
   if args.login:
     _login()
 
   measurements = _get_all_measurements()
   if measurements:
     print(f'{len(measurements)} {text["info_measurements_read"][lang]}')
-    gc = _init_garmin_connect()
-    # get measurements already uploaded to Garmin Connect
-    measurement_history_from_gc = _get_measurement_hashes_from_gc(gc)
-    count = 0
-    today = date.today()
-    for m in measurements:
-      m_date = date(m['year'], m['month'], m['day'])
-      if (today - m_date).days > max_age_days:
-        # skip this outdated entry
-        continue
-      m_hash = _get_measurement_hash(m)
-      if m_hash not in measurement_history_from_gc and (
-          ignore_measurement_user_id or m['user'] == 0 or m['user'] == beurer_user_id
-      ):
-        if not gc:
-          gc = _init_garmin_connect()
-          if not gc:
-            break
-        # only work on measurements that are not already uploaded
-        timestamp = datetime(
-            m['year'], m['month'], m['day'], m['hour'], m['minute'], 0, 0
-        ).isoformat()
-        notes = ''
-        if m['irregular heart beat']:
-          notes += f'{text["arrhythmia recognized"][lang]}\n'
-        if m['risk index'] in range(0, 7):
-          notes += (
-              f'{text["info_risk"][lang]}: {m["risk index"]} -'
-              f' {text[beurerbm.BeurerBM.risk_classification[m["risk index"]]["id"]][lang]}\n'
-          )
-        if m['recommendation']:
-          notes += f'{text["Recommendation"][lang]}: {text[m["recommendation"]][lang]}'
-        gc.set_blood_pressure(
-            m['systolic'], m['diastolic'], m['pulse rate'], timestamp, notes=notes
-        )
-        print(f"{timestamp}: {m['systolic']}/{m['diastolic']} {m['pulse rate']}")
-        count += 1
-    print(f'{count} {text["info_measurements_uploaded"][lang]}')
+    _sync_measurements_to_gc(measurements)
+    if save_locally:
+      _save_measurements_locally(measurements)
   _write_config()
 
 

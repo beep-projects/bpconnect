@@ -337,6 +337,16 @@ text = {
     "ru": "Вход в систему не удался, попробуйте использовать электронную почту и пароль",
     "tr": "Giriş başarısız oldu, e-posta ve şifre kullanmayı deneyin",
   },
+  "info_found_credentials_in_config": {
+    "de": "Anmeldeinformationen in der Konfigurationsdatei gefunden",
+    "en": "Credentials found in config file",
+    "es": "Credenciales encontradas en el archivo de configuración",
+    "fr": "Informations d'identification trouvées dans le fichier de configuration",
+    "it": "Credenziali trovate nel file di configurazione",
+    "pl": "Poświadczenia znalezione w pliku konfiguracyjnym",
+    "ru": "Учетные данные найдены в файле конфигурации",
+    "tr": "Yapılandırma dosyasında kimlik bilgileri bulundu",
+  },
   "info_login_success": {
     "de": "Login erfolgreich",
     "en": "Login successful",
@@ -366,6 +376,16 @@ text = {
     "pl": "pomiarów przesłanych do Garmin Connect",
     "ru": "измерений, загруженных в Garmin Connect",
     "tr": "ölçüm Garmin Connect'e yüklendi",
+  },
+  "info_measurements_added": {
+    "de": "Messungen hinzugefügt zu",
+    "en": "measurements added to",
+    "es": "medidas añadidas",
+    "fr": "mesures ajoutées à",
+    "it": "misure aggiunte",
+    "pl": "pomiarów dodanych do",
+    "ru": "измерений добавлено",
+    "tr": "ölçüm eklendi",
   },
   "help_help": {
     "de": "Zeigt diese Hilfe an und beendet bmconnect.",
@@ -575,6 +595,16 @@ text = {
       "bmconnect tarafından kullanılan dili yapılandırır. Özellikle Garmin Connect'e yüklenen"
       " ölçüm notları için. Bu seçenek kaydedilir."
     ),
+  },
+  "help_save_locally": {
+    "de": "Speichert die gelesenen Daten lokal, um sie mit anderen Tools weiterverarbeiten zu können. Diese Option wird gespeichert.",
+    "en": "Saves the read data locally so that it can be further processed with other tools. This option is saved.",
+    "es": "Guarda localmente los datos leídos para poder procesarlos posteriormente con otras herramientas. Esta opción se guarda.",
+    "fr": "Enregistre les données lues localement afin de pouvoir les traiter avec d'autres outils. Cette option est enregistrée.",
+    "it": "Salva i dati letti localmente per poterli elaborare ulteriormente con altri strumenti. Questa opzione viene salvata.",
+    "pl": "Zapisuje odczytane dane lokalnie, aby można je było dalej przetwarzać za pomocą innych narzędzi. Ta opcja jest zapisywana.",
+    "ru": "Сохраняет считанные данные локально, чтобы их можно было обработать другими инструментами. Эта опция сохраняется.",
+    "tr": "Okunan verileri diğer araçlarla daha fazla işlenebilmesi için yerel olarak kaydeder. Bu seçenek kaydedilir.",
   },
   "text_id": {
     "de": "text_german",
