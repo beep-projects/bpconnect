@@ -20,8 +20,8 @@ There exist other versions of this device, which use the USB-Serial Controller `
 
 Before uploading data to Garmin Connect, you need configure `bmconnect.py` using the `--login` and maybe `--language` and `--default_user` options. These options are saved in the config file and reloaded, everytime the script is run.  
 The config file is saved for each user running the script. If you change the user, you have to redo the configuration.  
-When the script is running, it tries for 10 seconds to find a compatible device. Once a device is found, the --login credentials are used to upload the measurements. The USB version of the Beurer BM behaves wired and only can be connected for a short duration. So if you want to do second reading, or waited for to long to start the script, you have to unplug it and plug in again. It works best, if you start the script and then immediately plugin the device.  
-To avoid duplicates in your Garmin Connect account, the measurements from the last 90 days are compared with each other and only the new ones are uploaded.  
+When the script is running, it tries for 10 seconds to find a compatible device. Once a device is found, the --login credentials are used to upload the measurements. The USB version of the Beurer BM behaves wired and only can be connected for a short duration. So if you want to do second reading, or waited for to long to start the script, you have to unplug it and plug it in again. It works best, if you start the script and then immediately plugin the device.  
+To avoid duplicates in your Garmin Connect account, the measurements from the last 90 days are downloaded and compared with the measurements stored on the Beurer device. Only the ones not yet available in Garmin Connect are then uploaded.  
 I.e. measuremenats older than 90 days will not be uploaded and if you delete a measurement online, it might get uploaded again by the script, if it is still present on your device. 
 ```bash
 python3 bmconnect.py -h
