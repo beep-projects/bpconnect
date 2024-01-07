@@ -112,10 +112,10 @@ tail -f /var/log/syslog
 <summary>Expand instructions</summary>
 
 #### Install python
-There are different ways to install Python on Windows. I started with this [guide](https://learn.microsoft.com/en-us/windows/python/scripting) and installed Python from the [Microsoft App Store](https://apps.microsoft.com/search?query=python). This ensures that you have the path variable set correctly,
+There are different ways to install Python on Windows. The following instructions are based on this [guide](https://learn.microsoft.com/en-us/windows/python/scripting) which installes Python from the [Microsoft App Store](https://apps.microsoft.com/search?query=python). This ensures that you have the path variable set correctly.
 
 #### Get bmconnect code
-You can install [Git](https://git-scm.com/download/win) and clone the repo or download the (zipped repo)[https://github.com/beep-projects/bmconnect/archive/refs/heads/main.zip] and extract it. For the following it is assumed, that the bmconnect code is saved in *C:\git\bmconnect*
+You can install [Git](https://git-scm.com/download/win) and clone the repo or download the [zipped repo](https://github.com/beep-projects/bmconnect/archive/refs/heads/main.zip) and extract it. For the following it is assumed, that the bmconnect code is saved in *C:\git\bmconnect*
 
 #### Install dependencies and configure libusb
 Open the PowerShell and run
@@ -138,6 +138,8 @@ C:\git\bmconnect\venv\Scripts\python.exe bmconnect.py --login
 ```
 #### Done
 You can now create a shortcut to run the script from your desktop
+```Target: C:\git\bmconnect\venv\Scripts\python.exe .\bmconnect.py```
+```Start in: C:\git\bmconnect\```
 
 </details>
 
