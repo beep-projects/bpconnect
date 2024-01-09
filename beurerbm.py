@@ -19,6 +19,7 @@
 """Classes to connect to Beurer blood preassure meters"""
 
 from abc import ABC, abstractmethod
+from bpm import BPM
 import serial
 from serial import SerialException
 from serial.tools.list_ports import comports
@@ -31,71 +32,6 @@ import usb.core
 class BeurerBM(ABC):
   """Abstract class for implementing Beurer blood preassure meters"""
 
-  risk_classification = [
-      {
-          'idx': 0,
-          'id': 'hypotension',
-          'systole min': 0,
-          'systole max': 100,
-          'diastole min': 0,
-          'diastole max': 60,
-          'recommendation': 'self-monitoring',
-      },
-      {
-          'idx': 1,
-          'id': 'optimal',
-          'systole min': 101,
-          'systole max': 119,
-          'diastole min': 61,
-          'diastole max': 79,
-          'recommendation': 'self-monitoring',
-      },
-      {
-          'idx': 2,
-          'id': 'normal',
-          'systole min': 120,
-          'systole max': 129,
-          'diastole min': 80,
-          'diastole max': 84,
-          'recommendation': 'self-monitoring',
-      },
-      {
-          'idx': 3,
-          'id': 'high normal',
-          'systole min': 130,
-          'systole max': 139,
-          'diastole min': 85,
-          'diastole max': 89,
-          'recommendation': 'regular monitoring by doctor',
-      },
-      {
-          'idx': 4,
-          'id': 'mild hypertension',
-          'systole min': 140,
-          'systole max': 159,
-          'diastole min': 90,
-          'diastole max': 99,
-          'recommendation': 'regular monitoring by doctor',
-      },
-      {
-          'idx': 5,
-          'id': 'moderate hypertension',
-          'systole min': 160,
-          'systole max': 179,
-          'diastole min': 100,
-          'diastole max': 109,
-          'recommendation': 'seek medical attention',
-      },
-      {
-          'idx': 6,
-          'id': 'severe hypertension',
-          'systole min': 180,
-          'systole max': 282,
-          'diastole min': 110,
-          'diastole max': 282,
-          'recommendation': 'seek medical attention',
-      },
-  ]
 
   def __init__(self):
     self.connected = False
@@ -153,30 +89,6 @@ class BeurerBM(ABC):
         'recommendation' = recommendation to take action based on risk index
     """
     pass
-
-  def get_risk_assessment(self, syst, diast) -> Tuple[int, str]:
-    """get the risk idx and action recommendation for a blood pressure measurement
-
-    Args:
-      syst: systole of the measurement
-      diast: diastole of the measurement
-
-    Returns:
-      idx: index of the entry in the risk_classification list
-      recommendation: the recommendation of the WHO
-    """
-    # loop from back to front. This ensures, the highest match is returned
-    for i in range(len(self.risk_classification) - 1, -1, -1):
-      # a match is if either syst or diast is in the defined range
-      if (
-          self.risk_classification[i]['systole min'] <= syst
-          and self.risk_classification[i]['systole max'] >= syst
-      ) or (
-          self.risk_classification[i]['diastole min'] <= diast
-          and self.risk_classification[i]['diastole max'] >= diast
-      ):
-        return self.risk_classification[i]['idx'], self.risk_classification[i]['recommendation']
-    return -1, 'unclassified'
 
 
 class BeurerBMSerial(BeurerBM):
@@ -242,21 +154,21 @@ class BeurerBMSerial(BeurerBM):
     if self.serialport.read() == b'\xAC':
       dataset = self.serialport.read(8)
       measurement = {}
-      measurement['systolic'] = dataset[0] + 25
-      measurement['diastolic'] = dataset[1] + 25
-      measurement['pulse rate'] = dataset[2]
-      measurement['month'] = dataset[3]
-      measurement['day'] = dataset[4]  # & 0b00011111
-      measurement['user'] = 0  # ((dataset[4] & 0b10000000) >> 7) + 1
-      measurement['irregular heart beat'] = False  # True if dataset[4] & 0b01100000 != 0 else False
-      measurement['hour'] = dataset[5]
-      measurement['minute'] = dataset[6]
-      measurement['year'] = dataset[7] + 2000
-      idx, recommendation = self.get_risk_assessment(
-          measurement['systolic'], measurement['diastolic']
+      measurement[BPM.systolic] = dataset[0] + 25
+      measurement[BPM.diastolic] = dataset[1] + 25
+      measurement[BPM.pulse] = dataset[2]
+      measurement[BPM.month] = dataset[3]
+      measurement[BPM.day] = dataset[4]  # & 0b00011111
+      measurement[BPM.user] = 0  # ((dataset[4] & 0b10000000) >> 7) + 1
+      measurement[BPM.irregular_heart_beat] = False  # True if dataset[4] & 0b01100000 != 0 else False
+      measurement[BPM.hour] = dataset[5]
+      measurement[BPM.minute] = dataset[6]
+      measurement[BPM.year] = dataset[7] + 2000
+      idx, recommendation = BPM.get_risk_assessment(
+          measurement[BPM.systolic], measurement[BPM.diastolic]
       )
-      measurement['risk index'] = idx
-      measurement['recommendation'] = recommendation
+      measurement[BPM.risk_index] = idx
+      measurement[BPM.recommendation] = recommendation
 
       return measurement
     # implicit handle 0xA9 for unknown id
@@ -386,57 +298,23 @@ class BeurerBMUSB(BeurerBM):
     measurement = {}
     # documentation seems to be wrong on some of these values.
     # parsing rules for user, IHR and year are obtained by observation
-    measurement['systolic'] = dataset[0] + 25
-    measurement['diastolic'] = dataset[1] + 25
-    measurement['pulse rate'] = dataset[2]
-    measurement['month'] = dataset[3]
-    measurement['day'] = dataset[4] & 0b00011111
-    measurement['user'] = ((dataset[4] & 0b10000000) >> 7) + 1
+    measurement[BPM.systolic] = dataset[0] + 25
+    measurement[BPM.diastolic] = dataset[1] + 25
+    measurement[BPM.pulse] = dataset[2]
+    measurement[BPM.month] = dataset[3]
+    measurement[BPM.day] = dataset[4] & 0b00011111
+    measurement[BPM.user] = ((dataset[4] & 0b10000000) >> 7) + 1
     # measurement['irregular heart beat'] = True if dataset[4] & 0b01100000 != 0 else False
-    measurement['hour'] = dataset[5]
-    measurement['minute'] = dataset[6]
-    measurement['year'] = (dataset[7] & 0b00011111) + 2000
-    measurement['irregular heart beat'] = True if dataset[7] & 0b10000000 != 0 else False
-    idx, recommendation = self.get_risk_assessment(
-        measurement['systolic'], measurement['diastolic']
+    measurement[BPM.hour] = dataset[5]
+    measurement[BPM.minute] = dataset[6]
+    measurement[BPM.year] = (dataset[7] & 0b00011111) + 2000
+    measurement[BPM.irregular_heart_beat] = True if dataset[7] & 0b10000000 != 0 else False
+    idx, recommendation = BPM.get_risk_assessment(
+        measurement[BPM.systolic], measurement[BPM.diastolic]
     )
-    measurement['risk index'] = idx
-    measurement['recommendation'] = recommendation
+    measurement[BPM.risk_index] = idx
+    measurement[BPM.recommendation] = recommendation
     return measurement
-
-
-def get_empty_measurement() -> dict[str, any] | None:
-  """Get a prototype of a measurement
-
-  Returns:
-    dict with following keys
-    'systolic' = Systolic measurement in mmHg
-    'diastolic' = Diastolic measurement in mmHg
-    'pulse rate' = Pulse rate of the measurement in beats per minute
-    'day' = day of the measurement date
-    'month' = month of the measurement date
-    'year' = year of the measurement date
-    'hour' = hour of the measurement timestamp
-    'minute' = minute of the measurement timestamp
-    'user' = user id if supported by the device, or 0
-    'irregular heart beat' = True if irregular heart beat was detected else False
-    'risk index' = WHO risk assessment for this measurement
-    'recommendation' = recommendation to take action based on risk index
-  """
-  return {
-      'systolic': -1,
-      'diastolic': -1,
-      'pulse rate': -1,
-      'day': -1,
-      'month': -1,
-      'year': -1,
-      'hour': -1,
-      'minute': -1,
-      'user': -1,
-      'irregular heart beat': False,
-      'risk index': -1,
-      'recommendation': '',
-  }
 
 
 def find(device: str = None, timeout: int = 10) -> BeurerBM:

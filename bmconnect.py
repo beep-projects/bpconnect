@@ -22,6 +22,7 @@ and upload them to Garmin Connect
 
 import argparse
 import base64
+from bpm import BPM
 import copy
 from datetime import date, datetime, timedelta
 import hashlib
@@ -182,13 +183,13 @@ def _get_all_measurements():
 def _get_measurement_hash(measurement: dict) -> str:
   m = measurement.copy()
   # ignore user for hash. The user cannot be retrieved back from Garmin Connect
-  m['user'] = 0
+  m[BPM.user] = 0
   # ignore calculated fields.
   # They have little to no added value for the hash and are difficult to
   # retrieved back from Garmin Connect, because we don't know of language settings have changed
-  m['irregular heart beat'] = False
-  m['risk index'] = 0
-  m['recommendation'] = ''
+  m[BPM.irregular_heart_beat] = False
+  m[BPM.risk_index] = 0
+  m[BPM.recommendation] = ''
   return hashlib.sha256(json.dumps(m, sort_keys=True).encode('utf-8')).hexdigest()
 
 
@@ -203,21 +204,21 @@ def _get_measurement_hashes_from_gc(gc: Garmin, dayspan=max_age_days) -> [str]:
   # extract measurements from garmin structure
   for measurement_summary in gc_measurements['measurementSummaries']:
     for measurement in measurement_summary['measurements']:
-      m = beurerbm.get_empty_measurement()
-      m['systolic'] = measurement['systolic']
-      m['diastolic'] = measurement['diastolic']
-      m['pulse rate'] = measurement['pulse']
+      m = BPM.get_empty_measurement()
+      m[BPM.systolic] = measurement['systolic']
+      m[BPM.diastolic] = measurement['diastolic']
+      m[BPM.pulse] = measurement['pulse']
       dt = datetime.fromisoformat(measurement['measurementTimestampLocal'])
-      m['day'] = dt.day
-      m['month'] = dt.month
-      m['year'] = dt.year
-      m['hour'] = dt.hour
-      m['minute'] = dt.minute
-      m['user'] = 0
+      m[BPM.day] = dt.day
+      m[BPM.month] = dt.month
+      m[BPM.year] = dt.year
+      m[BPM.hour] = dt.hour
+      m[BPM.minute] = dt.minute
+      m[BPM.user] = 0
       # ignored by hash, so not worth parsing back
-      m['irregular heart beat'] = False
-      m['risk index'] = -1
-      m['recommendation'] = ''
+      m[BPM.irregular_heart_beat] = False
+      m[BPM.risk_index] = -1
+      m[BPM.recommendation] = ''
       hashes.append(_get_measurement_hash(m))
   return hashes
 
@@ -228,13 +229,13 @@ def _sync_measurements_to_gc(measurements):
     count = 0
     today = date.today()
     for m in measurements:
-      m_date = date(m['year'], m['month'], m['day'])
+      m_date = date(m[BPM.year], m[BPM.month], m[BPM.day])
       if (today - m_date).days > max_age_days:
         # skip this outdated entry
         continue
       m_hash = _get_measurement_hash(m)
       if m_hash not in measurement_history_from_gc and (
-          ignore_measurement_user_id or m['user'] == 0 or m['user'] == beurer_user_id
+          ignore_measurement_user_id or m[BPM.user] == 0 or m[BPM.user] == beurer_user_id
       ):
         if not gc:
           gc = _init_garmin_connect()
@@ -242,22 +243,22 @@ def _sync_measurements_to_gc(measurements):
             break
         # only work on measurements that are not already uploaded
         timestamp = datetime(
-            m['year'], m['month'], m['day'], m['hour'], m['minute'], 0, 0
+            m[BPM.year], m[BPM.month], m[BPM.day], m[BPM.hour], m[BPM.minute], 0, 0
         ).isoformat()
         notes = ''
-        if m['irregular heart beat']:
+        if m[BPM.irregular_heart_beat]:
           notes += f'{text["arrhythmia recognized"][lang]}\n'
-        if m['risk index'] in range(0, 7):
+        if m[BPM.risk_index] in range(0, 7):
           notes += (
-              f'{text["info_risk"][lang]}: {m["risk index"]} -'
-              f' {text[beurerbm.BeurerBM.risk_classification[m["risk index"]]["id"]][lang]}\n'
+              f'{text["info_risk"][lang]}: {m[BPM.risk_index]} -'
+              f' {text[BPM.risk_classification[m[BPM.risk_index]]["name"]][lang]}\n'
           )
-        if m['recommendation']:
-          notes += f'{text["Recommendation"][lang]}: {text[m["recommendation"]][lang]}'
+        if m[BPM.recommendation]:
+          notes += f'{text["Recommendation"][lang]}: {text[m[BPM.recommendation]][lang]}'
         gc.set_blood_pressure(
-            m['systolic'], m['diastolic'], m['pulse rate'], timestamp, notes=notes
+            m[BPM.systolic], m[BPM.diastolic], m[BPM.pulse], timestamp, notes=notes
         )
-        print(f"{timestamp}: {m['systolic']}/{m['diastolic']} {m['pulse rate']}")
+        print(f"{timestamp}: {m[BPM.systolic]}/{m[BPM.diastolic]} {m[BPM.pulse]}")
         count += 1
     print(f'{count} {text["info_measurements_uploaded"][lang]}')
 
