@@ -20,18 +20,17 @@
 
 from abc import ABC, abstractmethod
 from bpm import BPM
+from datetime import date, datetime
 import serial
 from serial import SerialException
 from serial.tools.list_ports import comports
 import time
-from typing import Tuple
 from typing_extensions import override
 import usb.core
 
 
 class BeurerBM(ABC):
   """Abstract class for implementing Beurer blood preassure meters"""
-
 
   def __init__(self):
     self.connected = False
@@ -65,7 +64,7 @@ class BeurerBM(ABC):
     pass
 
   @abstractmethod
-  def get_measurement(self, num) -> dict[str, any] | None:
+  def get_measurement(self, num: int) -> dict[str, any] | None:
     """Get a specific measurement off the device
 
     Args:
@@ -78,6 +77,7 @@ class BeurerBM(ABC):
         'systolic' = Systolic measurement in mmHg
         'diastolic' = Diastolic measurement in mmHg
         'pulse rate' = Pulse rate of the measurement in beats per minute
+        'TODO pulse pressure, date, time'
         'day' = day of the measurement date
         'month' = month of the measurement date
         'year' = year of the measurement date
@@ -107,7 +107,7 @@ class BeurerBMSerial(BeurerBM):
     self.serialport = None
 
   @override
-  def connect(self):
+  def connect(self) -> bool:
     try:
       self.serialport = serial.Serial(
           port=self.device,
@@ -149,21 +149,27 @@ class BeurerBMSerial(BeurerBM):
     return response
 
   @override
-  def get_measurement(self, num) -> dict[str, any] | None:
+  def get_measurement(self, num: int) -> dict[str, any] | None:
     self.serialport.write(b'\xA3' + num.to_bytes(1, byteorder='little'))
     if self.serialport.read() == b'\xAC':
       dataset = self.serialport.read(8)
-      measurement = {}
+      measurement = BPM.get_empty_measurement()
       measurement[BPM.systolic] = dataset[0] + 25
       measurement[BPM.diastolic] = dataset[1] + 25
+      measurement[BPM.pulse_pressure] = measurement[BPM.systolic] - measurement[BPM.diastolic]
       measurement[BPM.pulse] = dataset[2]
-      measurement[BPM.month] = dataset[3]
-      measurement[BPM.day] = dataset[4]  # & 0b00011111
+      year = dataset[7] + 2000
+      month = dataset[3]
+      day = dataset[4]  # & 0b00011111
+      hour = dataset[5]
+      minute = dataset[6]
+      dt = datetime(year, month, day, hour, minute)
+      measurement[BPM.date] = dt.date()
+      measurement[BPM.time] = dt.time()
       measurement[BPM.user] = 0  # ((dataset[4] & 0b10000000) >> 7) + 1
-      measurement[BPM.irregular_heart_beat] = False  # True if dataset[4] & 0b01100000 != 0 else False
-      measurement[BPM.hour] = dataset[5]
-      measurement[BPM.minute] = dataset[6]
-      measurement[BPM.year] = dataset[7] + 2000
+      measurement[BPM.irregular_heart_beat] = (
+          False  # True if dataset[4] & 0b01100000 != 0 else False
+      )
       idx, recommendation = BPM.get_risk_assessment(
           measurement[BPM.systolic], measurement[BPM.diastolic]
       )
@@ -188,7 +194,7 @@ class BeurerBMUSB(BeurerBM):
     self.pid = pid
     self.usbdevice = None
 
-  def _tx(self, data):
+  def _tx(self, data: list[int]):
     """Send data to device
 
     The data length is 8 bytes.
@@ -203,7 +209,7 @@ class BeurerBMUSB(BeurerBM):
         data + [0xF4, 0xF4, 0xF4, 0xF4, 0xF4, 0xF4, 0xF4],
     )
 
-  def _rx(self, length):
+  def _rx(self, length: int):
     """Read bytes from device
 
     Args:
@@ -284,7 +290,7 @@ class BeurerBMUSB(BeurerBM):
     return self._rx(8)[0]
 
   @override
-  def get_measurement(self, num) -> dict[str, any] | None:
+  def get_measurement(self, num: int) -> dict[str, any] | None:
     # The first measurement starts with 0x01 and represents the newest measurement
     # of user 1 (highest measurement number on the device).
     # 0x02 is the second newest measurement of user 1. When all measurements of user 1 are read,
@@ -295,19 +301,22 @@ class BeurerBMUSB(BeurerBM):
     if dataset[0] == 0xA9:
       # requested measurement does not exist
       return None
-    measurement = {}
+    measurement = BPM.get_empty_measurement()
     # documentation seems to be wrong on some of these values.
     # parsing rules for user, IHR and year are obtained by observation
     measurement[BPM.systolic] = dataset[0] + 25
     measurement[BPM.diastolic] = dataset[1] + 25
+    measurement[BPM.pulse_pressure] = measurement[BPM.systolic] - measurement[BPM.diastolic]
     measurement[BPM.pulse] = dataset[2]
-    measurement[BPM.month] = dataset[3]
-    measurement[BPM.day] = dataset[4] & 0b00011111
+    year = (dataset[7] & 0b00011111) + 2000
+    month = dataset[3]
+    day = dataset[4] & 0b00011111
+    hour = dataset[5]
+    minute = dataset[6]
+    dt = datetime(year, month, day, hour, minute)
+    measurement[BPM.date] = dt.date()
+    measurement[BPM.time] = dt.time()
     measurement[BPM.user] = ((dataset[4] & 0b10000000) >> 7) + 1
-    # measurement['irregular heart beat'] = True if dataset[4] & 0b01100000 != 0 else False
-    measurement[BPM.hour] = dataset[5]
-    measurement[BPM.minute] = dataset[6]
-    measurement[BPM.year] = (dataset[7] & 0b00011111) + 2000
     measurement[BPM.irregular_heart_beat] = True if dataset[7] & 0b10000000 != 0 else False
     idx, recommendation = BPM.get_risk_assessment(
         measurement[BPM.systolic], measurement[BPM.diastolic]
@@ -317,7 +326,7 @@ class BeurerBMUSB(BeurerBM):
     return measurement
 
 
-def find(device: str = None, timeout: int = 10) -> BeurerBM:
+def find(device: str | None = None, timeout: int = 10) -> BeurerBM:
   """Find any Beurer blood preassure meter connected it to this machine
 
     First [device] is tested, if parameter is present, then
@@ -350,7 +359,7 @@ def find(device: str = None, timeout: int = 10) -> BeurerBM:
   return None
 
 
-def _test_usb_device(vid, pid) -> bool:
+def _test_usb_device(vid: int, pid: int) -> bool:
   """find the device in the usb subsystem and try to condect to it"""
   usbdevice = usb.core.find(idVendor=vid, idProduct=pid)
   if usbdevice is not None:
@@ -358,7 +367,7 @@ def _test_usb_device(vid, pid) -> bool:
   return False
 
 
-def _test_serial_device(device) -> bool:
+def _test_serial_device(device: str) -> bool:
   try:
     serialport = serial.Serial(
         port=device,

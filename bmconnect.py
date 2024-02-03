@@ -46,9 +46,6 @@ ignore_measurement_user_id = False
 lang = 'en'
 save_locally = False
 max_age_days = 90
-# max_history_entries = 200
-# measurement_history = []
-# blood_pressure_rating =
 
 
 def _login():
@@ -124,7 +121,7 @@ def _read_config():
   global default_beurer_user_id
   global save_locally
   # global measurement_history
-  #print(f'[bmconnect:_read_config] {conf_file}')
+  # print(f'[bmconnect:_read_config] {conf_file}')
   try:
     with conf_file.open() as f:
       config = json.load(f)
@@ -153,7 +150,13 @@ def _write_config():
             json_users[key]['garmin_password'].encode('utf-8')
         ).decode('utf-8')
       json.dump(
-          {'lang': lang, 'default_beurer_user_id': default_beurer_user_id, 'save_locally': save_locally, 'users': json_users}, f
+          {
+              'lang': lang,
+              'default_beurer_user_id': default_beurer_user_id,
+              'save_locally': save_locally,
+              'users': json_users,
+          },
+          f,
       )
   except (PermissionError, IOError, OSError) as e:
     print('[bmconnect:_write_config] Error: ', e)
@@ -187,10 +190,11 @@ def _get_measurement_hash(measurement: dict) -> str:
   # ignore calculated fields.
   # They have little to no added value for the hash and are difficult to
   # retrieved back from Garmin Connect, because we don't know of language settings have changed
+  m[BPM.pulse_pressure] = 0
   m[BPM.irregular_heart_beat] = False
   m[BPM.risk_index] = 0
   m[BPM.recommendation] = ''
-  return hashlib.sha256(json.dumps(m, sort_keys=True).encode('utf-8')).hexdigest()
+  return hashlib.sha256(json.dumps(m, sort_keys=True, default=str).encode('utf-8')).hexdigest()
 
 
 def _get_measurement_hashes_from_gc(gc: Garmin, dayspan=max_age_days) -> [str]:
@@ -208,12 +212,15 @@ def _get_measurement_hashes_from_gc(gc: Garmin, dayspan=max_age_days) -> [str]:
       m[BPM.systolic] = measurement['systolic']
       m[BPM.diastolic] = measurement['diastolic']
       m[BPM.pulse] = measurement['pulse']
+      m[BPM.pulse_pressure] = 0
       dt = datetime.fromisoformat(measurement['measurementTimestampLocal'])
-      m[BPM.day] = dt.day
-      m[BPM.month] = dt.month
-      m[BPM.year] = dt.year
-      m[BPM.hour] = dt.hour
-      m[BPM.minute] = dt.minute
+      m[BPM.date] = dt.date()
+      m[BPM.time] = dt.time()
+      #m[BPM.day] = dt.day
+      #m[BPM.month] = dt.month
+      #m[BPM.year] = dt.year
+      #m[BPM.hour] = dt.hour
+      #m[BPM.minute] = dt.minute
       m[BPM.user] = 0
       # ignored by hash, so not worth parsing back
       m[BPM.irregular_heart_beat] = False
@@ -222,45 +229,40 @@ def _get_measurement_hashes_from_gc(gc: Garmin, dayspan=max_age_days) -> [str]:
       hashes.append(_get_measurement_hash(m))
   return hashes
 
+
 def _sync_measurements_to_gc(measurements):
-    gc = _init_garmin_connect()
-    # get measurements already uploaded to Garmin Connect
-    measurement_history_from_gc = _get_measurement_hashes_from_gc(gc)
-    count = 0
-    today = date.today()
-    for m in measurements:
-      m_date = date(m[BPM.year], m[BPM.month], m[BPM.day])
-      if (today - m_date).days > max_age_days:
-        # skip this outdated entry
-        continue
-      m_hash = _get_measurement_hash(m)
-      if m_hash not in measurement_history_from_gc and (
-          ignore_measurement_user_id or m[BPM.user] == 0 or m[BPM.user] == beurer_user_id
-      ):
+  gc = _init_garmin_connect()
+  # get measurements already uploaded to Garmin Connect
+  measurement_history_from_gc = _get_measurement_hashes_from_gc(gc)
+  count = 0
+  today = date.today()
+  for m in measurements:
+    if (today - m[BPM.date]).days > max_age_days:
+      # skip this outdated entry
+      continue
+    m_hash = _get_measurement_hash(m)
+    if m_hash not in measurement_history_from_gc and (
+        ignore_measurement_user_id or m[BPM.user] == 0 or m[BPM.user] == beurer_user_id
+    ):
+      if not gc:
+        gc = _init_garmin_connect()
         if not gc:
-          gc = _init_garmin_connect()
-          if not gc:
-            break
-        # only work on measurements that are not already uploaded
-        timestamp = datetime(
-            m[BPM.year], m[BPM.month], m[BPM.day], m[BPM.hour], m[BPM.minute], 0, 0
-        ).isoformat()
-        notes = ''
-        if m[BPM.irregular_heart_beat]:
-          notes += f'{text["arrhythmia recognized"][lang]}\n'
-        if m[BPM.risk_index] in range(0, 7):
-          notes += (
-              f'{text["info_risk"][lang]}: {m[BPM.risk_index]} -'
-              f' {text[BPM.risk_classification[m[BPM.risk_index]]["name"]][lang]}\n'
-          )
-        if m[BPM.recommendation]:
-          notes += f'{text["Recommendation"][lang]}: {text[m[BPM.recommendation]][lang]}'
-        gc.set_blood_pressure(
-            m[BPM.systolic], m[BPM.diastolic], m[BPM.pulse], timestamp, notes=notes
+          break
+      timestamp = datetime.combine(m[BPM.date], m[BPM.time]).isoformat()
+      notes = ''
+      if m[BPM.irregular_heart_beat]:
+        notes += f'{text["arrhythmia recognized"][lang]}\n'
+      if m[BPM.risk_index] in range(0, 7):
+        notes += (
+            f'{text["info_risk"][lang]}: {m[BPM.risk_index]} -'
+            f' {text[BPM.risk_classification[m[BPM.risk_index]]["name"]][lang]}\n'
         )
-        print(f"{timestamp}: {m[BPM.systolic]}/{m[BPM.diastolic]} {m[BPM.pulse]}")
-        count += 1
-    print(f'{count} {text["info_measurements_uploaded"][lang]}')
+      if m[BPM.recommendation]:
+        notes += f'{text["Recommendation"][lang]}: {text[m[BPM.recommendation]][lang]}'
+      gc.set_blood_pressure(m[BPM.systolic], m[BPM.diastolic], m[BPM.pulse], timestamp, notes=notes)
+      print(f'{timestamp}: {m[BPM.systolic]}/{m[BPM.diastolic]} {m[BPM.pulse]}')
+      count += 1
+  print(f'{count} {text["info_measurements_uploaded"][lang]}')
 
 
 def _save_measurements_locally(measurements):
@@ -275,6 +277,7 @@ def _save_measurements_locally(measurements):
   df.to_feather(data_file)
   print(f'{count} {text["info_measurements_added"][lang]} {data_file}')
 
+
 def _get_args():
   parser = argparse.ArgumentParser(add_help=False)
   parser.add_argument(
@@ -287,6 +290,14 @@ def _get_args():
       required=False,
       action='store_true',
       help=text['help_login'][lang],
+  )
+  parser.add_argument(
+      '-off',
+      '--offline',
+      dest='offline',
+      required=False,
+      action='store_true',
+      help=text['help_offline'][lang],
   )
   parser.add_argument(
       '-u',
@@ -327,7 +338,7 @@ def _get_args():
       choices=text_lang,
       action='store',
       help=text['help_language'][lang],
-  ),
+  )
   parser.add_argument(
       '-sl',
       '--save-locally',
@@ -335,6 +346,14 @@ def _get_args():
       required=False,
       action='store_true',
       help=text['help_save_locally'][lang],
+  )
+  parser.add_argument(
+      '-dsl',
+      '--dont-save-locally',
+      dest='dont_save_locally',
+      required=False,
+      action='store_true',
+      help=text['help_dont_save_locally'][lang],
   )
   args = parser.parse_args()
   return args
@@ -364,7 +383,10 @@ def main():
     lang = args.lang
 
   if args.save_locally:
-    save_locally = args.save_locally
+    save_locally = True
+
+  if args.dont_save_locally:
+    save_locally = False
 
   if args.login:
     _login()
@@ -372,7 +394,8 @@ def main():
   measurements = _get_all_measurements()
   if measurements:
     print(f'{len(measurements)} {text["info_measurements_read"][lang]}')
-    _sync_measurements_to_gc(measurements)
+    if not args.offline:
+      _sync_measurements_to_gc(measurements)
     if save_locally:
       _save_measurements_locally(measurements)
   _write_config()

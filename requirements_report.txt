@@ -1,1 +1,2 @@
 matplotlib>=3.8.2
+xhtml2pdf>=0.2.13

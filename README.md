@@ -7,31 +7,38 @@
 
   <sup>\[[Usage](#usage)\] \[[Installation](#installation)\] \[[Contribute](#contribute)\] \[[Report bugs](https://github.com/beep-projects/bmconnect/issues)\] \[[Feedback](https://github.com/beep-projects/bmconnect/discussions)\]</sup>  
 
-# bmconnect
-`bmconnect.py` is a python script to upload measurements from a [Beurer BM58](https://www.beurer.com/uk/p/65516/#overview--anchor) blood pressure meter to a [Garmin Connect](https://connect.garmin.com) account. Each measurement is annotated with risk grading  and recommendation for action, to support you in understanding the data.  
+| # bmconnect | # bp_report |
+|:--- |:--- |
+|`bmconnect.py` is a python script to upload measurements from a [Beurer BM58](https://www.beurer.com/uk/p/65516/#overview--anchor) blood pressure meter to a [Garmin Connect](https://connect.garmin.com) account. Each measurement is annotated with risk grading  and recommendation for action, to support you in understanding the data. In your Garmin Connect account, the data will show up as Health Data - Blood Preassure. | With `bp_report.py` you can generate a Blood Preassure Report as PDF. The report includes some graphs and a full listing of all measuremnts used for the report. The generation of the report requires that you use the `--save-locally` option with `bmconnect.py`, to activate the creation of a local file for the measurements. |  
+|<center> <img src="resources/connect_app_overview.png" alt="Blood pressure daily overview" style="width:200px;"/> <img src="resources/connect_app_notes.png" alt="Notes added to the measurements" style="width:200px"/> </center>|<center> <img src="resources/scatter.svg" alt="Classification" style="width:400px;"/> <img src="resources/measurement_series.svg" alt="Classification" style="width:400px;"/> <img src="resources/hist.svg" alt="Classification" style="width:200px;"/> <img src="resources/pdfs.svg" alt="Classification" style="width:200px;"/> </center>|
 
-<img src="resources/connect_app_overview.png" alt="Blood pressure daily overview" style="width:250px;"/> <img src="resources/connect_app_notes.png" alt="Notes added to the measurements" style="width:250px"/>  
-
-If you want to get support for other devices, read the [Contribute](#Contribute) section.  
+If you want to get support for other devices inti `bmconnect.py`, read the [Contribute](#Contribute) section.  
 Currently I only own a Beurer BM58, wich connects under Linux as HID device `ID 0c45:7406 Microdia USB Device`.
 There exist other versions of this device, which use the USB-Serial Controller `pl2303` and connect as ttyUSB device. Support for that version is copied from other projects and not tested. Please give it a try if you own such a device and send feedback.
 
 ## Usage
+
+Typical usage of `bm_connect.py` is the synchronization of your measurement data with a Garmin Connect account, but you can also configure it, to only save the readings locally and skip the syncronization with Garmin Connect, e.g. if you only want to generate reports `bp_report.py`.  
+### Usage of `bmconnect.py`
+<details>
+<summary>Expand instructions</summary>
 
 Before uploading data to Garmin Connect, you need configure `bmconnect.py` using the `--login` and maybe `--language` and `--default_user` options. These options are saved in the config file and reloaded, everytime the script is run.  
 The config file is saved for each user running the script. If you change the user, you have to redo the configuration.  
 When the script is running, it tries for 10 seconds to find a compatible device. Once a device is found, the --login credentials are used to upload the measurements. The USB version of the Beurer BM behaves wired and only can be connected for a short duration. So if you want to do second reading, or waited for to long to start the script, you have to unplug it and plug it in again. It works best, if you start the script and then immediately plugin the device.  
 To avoid duplicates in your Garmin Connect account, the measurements from the last 90 days are downloaded and compared with the measurements stored on the Beurer device. Only the ones not yet available in Garmin Connect are then uploaded.  
 I.e. measuremenats older than 90 days will not be uploaded and if you delete a measurement online, it might get uploaded again by the script, if it is still present on your device. 
+
 ```bash
 python3 bmconnect.py -h
 
-usage: bmconnect.py [-h] [-l] [-u {1, ..., 255}] [-du {1, ..., 255}] [-i] [-lc {de,en,es,fr,it,pl,ru,tr}]
+usage: bmconnect.py [-h] [-l] [-off] [-u {1, ..., 255}] [-du {1, ..., 255}] [-i] [-lc {de,en,es,fr,it,pl,ru,tr}] [-sl] [-dsl]
 
 options:
   -h, --help            Shows this help message and exits bmconnect.
   -l, --login           Configures the login credentials for the Garmin Connect account and tests them. Should be used together with the --user option, otherwise the
                         credentials for the default user will be set. This option is saved.
+  -off, --offline       Deactivates synchronization with a Garmin Connect account. Useful if you only want to use bp_report.py. This option is not saved.
   -u {1, ..., 255}, --user {1, ..., 255}
                         Configures the active user from the Beurer device whose measurements shall be uploaded to Garmin Connect. Defaults to --default_user if not
                         set.
@@ -43,7 +50,39 @@ options:
   -lc {de,en,es,fr,it,pl,ru,tr}, --language {de,en,es,fr,it,pl,ru,tr}
                         Configures the language used by bmconnect. Especially for measurement notes uploaded to Garmin Connect. This option is saved.
   -sl, --save-locally   Saves the read data locally so that it can be further processed with other tools. This option is saved.
+  -dsl, --dont-save-locally
+                        Ends the local saving of the read data if it was previously activated with --save_locally. This option is saved
 ```
+</details>
+
+### Usage of `bp_report.py`
+<details>
+<summary>Expand instructions</summary>
+
+Before you can use `bp_report.py`, you need to configure `bmconnect.py` with the `--save-locally` option, in order to generate the `measurements.feather` file, used by `bp_peport.py for report generation. The script itself reads the measurement file an creates a PDF, containing some graphical representation of the measured values and a table with all measurements used for the graphics. You can use the `--start_date` and `--end_date` option, to select a subrange of your locally saved data. The created PDF file is stored in the `report` subdirectory of your installation folder.
+```bash
+python3 bp_report.py -h
+
+usage: bp_report.py [-h] [-n NAME] [-b BIRTHDAY] [-sd START_DATE] [-ed END_DATE] [-g GENDER] [-lc {de,en,es,fr,it,pl,ru,tr}]
+
+options:
+  -h, --help            show this help message and exit
+  -n NAME, --name NAME  The name to be used in the generated report. Is output as entered.
+  -b BIRTHDAY, --birthday BIRTHDAY
+                        The date to be used as the date of birth in the generated report. The date must be specified in any valid ISO 8601 format (e.g. 2021-06-11,
+                        20210611, 2021-W23-5), except ordinal numbers (e.g. 2021-162)
+  -sd START_DATE, --start_date START_DATE
+                        Start date of the reporting period which is used in conjunction with --end_date to specify the actual period the report is generated for. The
+                        date must be specified in any valid ISO 8601 format (e.g. 2021-06-11, 20210611, 2021-W23-5), except ordinal numbers (e.g. 2021-162)
+  -ed END_DATE, --end_date END_DATE
+                        End date of the reporting period which is used in conjunction with --start_date to specify the actual period the report is generated for. The
+                        date must be specified in any valid ISO 8601 format (e.g. 2021-06-11, 20210611, 2021-W23-5), except ordinal numbers (e.g. 2021-162)
+  -g GENDER, --gender GENDER
+                        The gender to be used in the created report. Free text, choose what you feel like.
+  -lc {de,en,es,fr,it,pl,ru,tr}, --language {de,en,es,fr,it,pl,ru,tr}
+                        Configures the language used by bmconnect/bp_report. This option is saved.
+```
+</details>
 
 ## Installation
 At the moment, I have tested `bmconnect.py` only on Ububtu 23.10 and Windows 11. On Ubuntu (and most likely any distribution using udev), the script runs triggered by the USB plug in of the device. On Windows I could not figure out, how this could be achieved (USB events 400 and 410 seem not be usable as trigger events in task scheduler).
@@ -61,6 +100,10 @@ Create virtual python environment and get the required modules
 ```bash
 python3 -m venv venv
 ./venv/bin/pip3 install -r requirements.txt
+```
+If you want to also use `bp_report.py` run
+```powershell
+./venv/bin/pip3 install -r requirements_report.txt
 ```
 #### Configure bmconnect
 Note, the config will be saved for the user running `bmconnect.py`, so if you intend to install bmconnect to be automatically run as soon as a device is plugged in, you have to run the following command as `sudo`.
@@ -125,6 +168,10 @@ cd C:\git\bmconnect\
 python3 -m venv venv
 .\venv\Scripts\pip3.exe install -r requirements.txt
 ```
+If you want to also use `bp_report.py` run
+```powershell
+.\venv\Scripts\pip3.exe install -r requirements_report.txt
+```
 #### Add libusb to $env:path
 On my installation the script was complaining about a missing backend for usb.core. That was because libusb was not available in the path variable.
 Adjust the following to match your installation:
@@ -145,7 +192,7 @@ You can now create a shortcut to run the script from your desktop
 </details>
 
 ## Contribute
-If you want to contribute to this project, please read [Contributing Guide](docs/CONTRIBUTING.md). To keep it short, it is best if you simply open a new [Discussion](https://github.com/beep-projects/bmconnect/discussions) and talk about what you want to do, or where you need help.
+If you want to contribute to this project, please read the [Contributing Guide](docs/CONTRIBUTING.md). To keep it short, it is best if you simply open a new [Discussion](https://github.com/beep-projects/bmconnect/discussions) and talk about what you want to do, or where you need help.
 
 The language support is just added out of couriosity on how this could be done without using a big framework. So the translations are actually all done by an online translator. Feel free to improve the texts or add a new language in [bmconnect_i18n.py](bmconnect_i18n.py)
 

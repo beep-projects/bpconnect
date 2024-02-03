@@ -15,17 +15,20 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see https://www.gnu.org/licenses/
 # -------------------------------------------------------------------------------------------------
-
+"""Module that provides only class BPM"""
 from typing import Tuple
 
 
-class BPM():
+class BPM:
   """Class defining the structiure of a blood pressure measurment as dict
 
   The dict should have the following keys, if they are supported my the device
     'systolic' = Systolic measurement in mmHg
     'diastolic' = Diastolic measurement in mmHg
     'pulse rate' = Pulse rate of the measurement in beats per minute
+    'TODO pulse pressure'
+    'TODO date'
+    'TODO time'
     'day' = day of the measurement date
     'month' = month of the measurement date
     'year' = year of the measurement date
@@ -37,21 +40,30 @@ class BPM():
     'recommendation' = recommendation to take action based on risk index
   """
 
+  date = 'date'
+  time = 'time'
   systolic = 'systolic'
   diastolic = 'diastolic'
+  pulse_pressure = 'pulse pressure'
   pulse = 'pulse rate'
-  day = 'day'
-  month = 'month'
-  year= 'year'
-  hour= 'hour'
-  minute= 'minute'
-  user= 'user'
-  irregular_heart_beat= 'irregular heart beat'
-  risk_index= 'risk index'
-  recommendation= 'recommendation'
+  user = 'user'
+  irregular_heart_beat = 'irregular heart beat'
+  risk_index = 'risk index'
+  recommendation = 'recommendation'
 
-  keys = [systolic, diastolic, pulse, day, month, year, hour, minute, user, irregular_heart_beat, risk_index, recommendation]
-  
+  keys = [
+      date,
+      time,
+      systolic,
+      diastolic,
+      pulse_pressure,
+      pulse,
+      user,
+      irregular_heart_beat,
+      risk_index,
+      recommendation,
+  ]
+
   risk_classification = [
       {
           'idx': 0,
@@ -65,46 +77,46 @@ class BPM():
       {
           'idx': 1,
           'name': 'optimal',
-          'systole min': 101,
-          'systole max': 119,
-          'diastole min': 61,
-          'diastole max': 79,
+          'systole min': 100,
+          'systole max': 120,
+          'diastole min': 60,
+          'diastole max': 80,
           'recommendation': 'self-monitoring',
       },
       {
           'idx': 2,
           'name': 'normal',
           'systole min': 120,
-          'systole max': 129,
+          'systole max': 130,
           'diastole min': 80,
-          'diastole max': 84,
+          'diastole max': 85,
           'recommendation': 'self-monitoring',
       },
       {
           'idx': 3,
           'name': 'high normal',
           'systole min': 130,
-          'systole max': 139,
+          'systole max': 140,
           'diastole min': 85,
-          'diastole max': 89,
+          'diastole max': 90,
           'recommendation': 'regular monitoring by doctor',
       },
       {
           'idx': 4,
           'name': 'mild hypertension',
           'systole min': 140,
-          'systole max': 159,
+          'systole max': 160,
           'diastole min': 90,
-          'diastole max': 99,
+          'diastole max': 100,
           'recommendation': 'regular monitoring by doctor',
       },
       {
           'idx': 5,
           'name': 'moderate hypertension',
           'systole min': 160,
-          'systole max': 179,
+          'systole max': 180,
           'diastole min': 100,
-          'diastole max': 109,
+          'diastole max': 110,
           'recommendation': 'seek medical attention',
       },
       {
@@ -118,18 +130,19 @@ class BPM():
       },
   ]
 
-
-  def isComplete(dictionary: dict):
+  @staticmethod
+  def is_complete(dictionary: dict):
     """Test if a given dict has all mandatory keys
-    
+
     Attributes:
       dictionary = the dict to evaluate
 
     Returns:
-      True if 
+      True if
     """
     return all(k in dictionary.keys() for k in BPM.keys)
-  
+
+  @staticmethod
   def get_risk_assessment(syst, diast) -> Tuple[int, str]:
     """get the risk idx and action recommendation for a blood pressure measurement
 
@@ -145,15 +158,16 @@ class BPM():
     for i in range(len(BPM.risk_classification) - 1, -1, -1):
       # a match is if either syst or diast is in the defined range
       if (
-        BPM.risk_classification[i]['systole min'] <= syst
-        and BPM.risk_classification[i]['systole max'] >= syst
+          BPM.risk_classification[i]['systole min'] <= syst
+          and BPM.risk_classification[i]['systole max'] >= syst
       ) or (
-        BPM.risk_classification[i]['diastole min'] <= diast
-        and BPM.risk_classification[i]['diastole max'] >= diast
+          BPM.risk_classification[i]['diastole min'] <= diast
+          and BPM.risk_classification[i]['diastole max'] >= diast
       ):
         return BPM.risk_classification[i]['idx'], BPM.risk_classification[i]['recommendation']
     return -1, 'unclassified'
 
+  @staticmethod
   def get_empty_measurement() -> dict[str, any] | None:
     """Get a prototype of a measurement
 
@@ -162,6 +176,9 @@ class BPM():
       'systolic' = Systolic measurement in mmHg
       'diastolic' = Diastolic measurement in mmHg
       'pulse rate' = Pulse rate of the measurement in beats per minute
+      'TODO pulse pressure'
+      'TODO date'
+      'TODO time'
       'day' = day of the measurement date
       'month' = month of the measurement date
       'year' = year of the measurement date
@@ -173,19 +190,14 @@ class BPM():
       'recommendation' = recommendation to take action based on risk index
     """
     return {
+        BPM.date: None,
+        BPM.time: None,
         BPM.systolic: -1,
         BPM.diastolic: -1,
+        BPM.pulse_pressure: -1,
         BPM.pulse: -1,
-        BPM.day: -1,
-        BPM.month: -1,
-        BPM.year: -1,
-        BPM.hour: -1,
-        BPM.minute: -1,
         BPM.user: -1,
         BPM.irregular_heart_beat: False,
         BPM.risk_index: -1,
         BPM.recommendation: '',
     }
-
-
-
