@@ -24,8 +24,9 @@
 |`bpconnect.py` is a python script to upload measurements from a blood pressure meter to [Garmin Connect](https://connect.garmin.com). Each uploaded measurement is annotated with risk grading  and recommendation for action, to support you in understanding the data. In your Garmin Connect account, the data will show up as Health Data - Blood Preassure. Currently only the [Beurer BM58](https://www.beurer.com/uk/p/65516/#overview--anchor) is supported, if you want to get support for other devices, you just need to volunteer for testing, or read the [Contribute](#Contribute) section and add it on your own. | With `bpreport.py` you can generate a Blood Preassure Report as PDF. The report includes some graphs and a full listing of all measuremnts used for the report. The generation of the report requires that you use `bpconnect.py` with the `--save-locally` option, to activate the creation of a local file for the measurements. |  
 |<center> <img src="resources/connect_app_overview.png" alt="Blood pressure daily overview" style="width:200px;"/> <img src="resources/connect_app_notes.png" alt="Notes added to the measurements" style="width:200px"/> </center>|<center> <img src="resources/scatter.svg" alt="Classification" style="width:400px;"/> <img src="resources/measurement_series.svg" alt="Classification" style="width:400px;"/> <img src="resources/hist.svg" alt="Classification" style="width:200px;"/> <img src="resources/pdfs.svg" alt="Classification" style="width:200px;"/> </center>|
 
-[!NOTE] The Beurer BM58 that I own connects under Linux as HID device `ID 0c45:7406 Microdia USB Device`.
-There are other versions of this device that use the USB-serial controller `pl2303` and connect as ttyUSB device. Support for that version is copied from other projects and not tested. Please give it a try if you own such a device and send feedback.
+> [!NOTE]
+> The Beurer BM58 that I own connects under Linux as HID device `ID 0c45:7406 Microdia USB Device`.
+> There are other versions of this device that use the USB-serial controller `pl2303` and connect as ttyUSB device. Support for that version is copied from other projects and not tested. Please give it a try if you own such a device and send feedback.
 
 ## Usage
 
