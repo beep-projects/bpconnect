@@ -3,8 +3,8 @@
   <img alt="bm+connect" src="resources/bpconnect_banner.png">
 </picture>
 
-[![GitHub license](https://img.shields.io/github/license/beep-projects/bpconnect)](https://github.com/beep-projects/bpconnect/blob/main/LICENSE) [![Pylint](https://github.com/beep-projects/bpconnect/actions/workflows/pylint.yml/badge.svg)](https://github.com/beep-projects/bpconnect/actions/workflows/pylint.yml) [![GitHub issues](https://img.shields.io/github/issues/beep-projects/bpconnect)](https://github.com/beep-projects/bpconnect/issues) [![GitHub forks](https://img.shields.io/github/forks/beep-projects/bpconnect)](https://github.com/beep-projects/bpconnect/network) [![GitHub stars](https://img.shields.io/github/stars/beep-projects/bpconnect)](https://github.com/beep-projects/bpconnect/stargazers) ![GitHub repo size](https://img.shields.io/github/repo-size/beep-projects/bpconnect) [![Scc Count Badge](https://sloc.xyz/github/beep-projects/bpconnect/?category=code)](https://github.com/beep-projects/bpconnect/) [![Scc Count Badge](https://sloc.xyz/github/beep-projects/bpconnect/?category=blanks)](https://github.com/beep-projects/bpconnect/) [![Scc Count Badge](https://sloc.xyz/github/beep-projects/bpconnect/?category=lines)](https://github.com/beep-projects/bpconnect/) [![Scc Count Badge](https://sloc.xyz/github/beep-projects/bpconnect/?category=comments)](https://github.com/beep-projects/bpconnect/) [![Scc Count Badge](https://sloc.xyz/github/beep-projects/bpconnect/?category=cocomo)](https://github.com/beep-projects/bpconnect/)
-
+<sup>Code:</sup> [![GitHub license](https://img.shields.io/github/license/beep-projects/bpconnect)](https://github.com/beep-projects/bpconnect/blob/main/LICENSE) [![Pylint](https://github.com/beep-projects/bpconnect/actions/workflows/pylint.yml/badge.svg)](https://github.com/beep-projects/bpconnect/actions/workflows/pylint.yml) [![Scc Count Badge](https://sloc.xyz/github/beep-projects/bpconnect/?category=code)](https://github.com/beep-projects/bpconnect/) [![Scc Count Badge](https://sloc.xyz/github/beep-projects/bpconnect/?category=blanks)](https://github.com/beep-projects/bpconnect/) [![Scc Count Badge](https://sloc.xyz/github/beep-projects/bpconnect/?category=lines)](https://github.com/beep-projects/bpconnect/) [![Scc Count Badge](https://sloc.xyz/github/beep-projects/bpconnect/?category=comments)](https://github.com/beep-projects/bpconnect/) [![Scc Count Badge](https://sloc.xyz/github/beep-projects/bpconnect/?category=cocomo)](https://github.com/beep-projects/bpconnect/)  
+<sup>Repo:</sup> [![GitHub forks](https://img.shields.io/github/forks/beep-projects/bpconnect)](https://github.com/beep-projects/bpconnect/network) [![GitHub stars](https://img.shields.io/github/stars/beep-projects/bpconnect)](https://github.com/beep-projects/bpconnect/stargazers) [![GitHub issues](https://img.shields.io/github/issues/beep-projects/bpconnect)](https://github.com/beep-projects/bpconnect/issues) ![GitHub repo size](https://img.shields.io/github/repo-size/beep-projects/bpconnect)  
 <sup>Supported Languages:</sup><!-- base64 flags are available at https://www.phoca.cz/cssflags/ -->
 <img height="20px" src="https://img.shields.io/badge/EN-flag.svg?color=555555&style=flat-square&logo=data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB2aWV3Qm94PSIwIDAgNjAgMzAiIGhlaWdodD0iNjAwIj4NCjxkZWZzPg0KPGNsaXBQYXRoIGlkPSJ0Ij4NCjxwYXRoIGQ9Im0zMCwxNWgzMHYxNXp2MTVoLTMwemgtMzB2LTE1enYtMTVoMzB6Ii8+DQo8L2NsaXBQYXRoPg0KPC9kZWZzPg0KPHBhdGggZmlsbD0iIzAwMjQ3ZCIgZD0ibTAsMHYzMGg2MHYtMzB6Ii8+DQo8cGF0aCBzdHJva2U9IiNmZmYiIHN0cm9rZS13aWR0aD0iNiIgZD0ibTAsMGw2MCwzMG0wLTMwbC02MCwzMCIvPg0KPHBhdGggc3Ryb2tlPSIjY2YxNDJiIiBzdHJva2Utd2lkdGg9IjQiIGQ9Im0wLDBsNjAsMzBtMC0zMGwtNjAsMzAiIGNsaXAtcGF0aD0idXJsKCN0KSIvPg0KPHBhdGggc3Ryb2tlPSIjZmZmIiBzdHJva2Utd2lkdGg9IjEwIiBkPSJtMzAsMHYzMG0tMzAtMTVoNjAiLz4NCjxwYXRoIHN0cm9rZT0iI2NmMTQyYiIgc3Ryb2tlLXdpZHRoPSI2IiBkPSJtMzAsMHYzMG0tMzAtMTVoNjAiLz4NCjwvc3ZnPg0K">
 <img height="20px" src="https://img.shields.io/badge/DE-flag.svg?color=555555&style=flat-square&logo=data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiBoZWlnaHQ9IjYwMCIgdmlld0JveD0iMCAwIDUgMyI+DQo8cGF0aCBkPSJtMCwwaDV2M2gtNXoiLz4NCjxwYXRoIGZpbGw9IiNkMDAiIGQ9Im0wLDFoNXYyaC01eiIvPg0KPHBhdGggZmlsbD0iI2ZmY2UwMCIgZD0ibTAsMmg1djFoLTV6Ii8+DQo8L3N2Zz4NCg==">
@@ -22,7 +22,7 @@
 | # bpconnect | # bpreport |
 |:--- |:--- |
 |`bpconnect.py` is a python script to upload measurements from a blood pressure meter to [Garmin Connect](https://connect.garmin.com). Each uploaded measurement is annotated with risk grading  and recommendation for action, to support you in understanding the data. In your Garmin Connect account, the data will show up as Health Data - Blood Preassure. Currently only the [Beurer BM58](https://www.beurer.com/uk/p/65516/#overview--anchor) is supported, if you want to get support for other devices, you just need to volunteer for testing, or read the [Contribute](#Contribute) section and add it on your own. | With `bpreport.py` you can generate a Blood Preassure Report as PDF. The report includes some graphs and a full listing of all measuremnts used for the report. The generation of the report requires that you use `bpconnect.py` with the `--save-locally` option, to activate the creation of a local file for the measurements. |  
-|<center> <img src="resources/connect_app_overview.png" alt="Blood pressure daily overview" style="width:200px;"/> <img src="resources/connect_app_notes.png" alt="Notes added to the measurements" style="width:200px"/> </center>|<center> <img src="resources/scatter.svg" alt="Classification" style="width:400px;"/> <img src="resources/measurement_series.svg" alt="Classification" style="width:400px;"/> <img src="resources/hist.svg" alt="Classification" style="width:200px;"/> <img src="resources/pdfs.svg" alt="Classification" style="width:200px;"/> </center>|
+|<div align="center"> <img src="resources/connect_app_overview.png" alt="Blood pressure daily overview" style="width:200px;"/> <img src="resources/connect_app_notes.png" alt="Notes added to the measurements" style="width:200px"/> </div>|<div align="center"> <img src="resources/scatter.svg" alt="Classification" style="width:400px;"/> <img src="resources/measurement_series.svg" alt="Classification" style="width:400px;"/> <img src="resources/hist.svg" alt="Classification" style="width:200px;"/> <img src="resources/pdfs.svg" alt="Classification" style="width:200px;"/> </div>|
 
 > [!NOTE]
 > The Beurer BM58 that I own connects under Linux as HID device `ID 0c45:7406 Microdia USB Device`.
@@ -39,8 +39,8 @@ Before uploading data to Garmin Connect, you need configure `bpconnect.py` using
 The config file is saved for each user running the script. If you change the user, you have to redo the configuration.  
 When the script is running, it tries for 10 seconds to find a compatible device. Once a device is found, the --login credentials are used to upload the measurements.  
 To avoid duplicates in your Garmin Connect account, the measurements from the last 90 days are downloaded and compared with the measurements stored on your blood pressure meter. Only the ones not yet available in Garmin Connect are then uploaded.  
-I.e. measuremenats older than 90 days will not be uploaded; if you delete a measurement online, it might get uploaded again by the script, if it is still present on your device.  
-The USB version of the Beurer BM behaves weird and only can be connected for a short duration. So if you want to do a second reading, or waited for to long to start the script, you have to unplug it and plug it in again. It works best, if you start the script and then immediately plugin the device.  
+I.e. measurements older than 90 days will not be uploaded; if you delete a measurement online, it might get uploaded again by the script, if it is still present on your device.  
+The USB version of the Beurer BM behaves weird and only can be connected for a short duration. If you want to do a second reading, or waited for too long to start the script, you have to unplug it and plug it in again. It works best, if you start the script and then immediately plugin the device.  
 
 ```bash
 python3 bpconnect.py -h
@@ -134,16 +134,16 @@ Now you can test if everything works fine for you. Plug in your device and execu
 ```bash
 ./venv/bin/python3 bpconnect.py
 ```
-#### Done or continue and patch bpconnect.service 
+#### Done! Or continue and patch bpconnect.service 
 If the test was successful, you are done, or you can continue to install it to run everytime you plug in the USB device.  
-For the autostart, you have to patch the provided `bpconnect.service` file, to use your current installation. If you want to use options like ```--ignore``` you have to add it to the command in the service file as well.
+For the autostart, you have to patch the provided `bpconnect.service` file, to use your current installation location. If you want to use options like `--ignore` you have to add it to the command in the service file as well.
 ```bash
 # edit this line: 
 # ExecStart=[path to python venv]/bin/python3 [path to script]/bpconnect.py
 # by hand, or via
 sed -i "s|^ExecStart=.*|ExecStart="$(pwd)"\/venv\/bin/python3 "$(pwd)"\/bpconnect.py|" bpconnect.service
 ```
-#### Install bpconnect.service to systemd
+#### Install bpconnect.service for systemd
 Now you need to install the `bpconnect.service` for systemd. You only need to copy it, but not enable it via `systemctl`, because this service should not run on startup.
 ```bash
 sudo cp bpconnect.service /etc/systemd/system
@@ -169,10 +169,10 @@ tail -f /var/log/syslog
 <summary>Expand instructions</summary>
 
 #### Install Python
-There are different ways to install Python on Windows. The following instructions are based on this [guide](https://learn.microsoft.com/en-us/windows/python/scripting) which installes Python from the [Microsoft App Store](https://apps.microsoft.com/search?query=python). This ensures that you have the path variable set correctly.
+There are different ways to install Python on Windows. The following instructions are based on this [guide](https://learn.microsoft.com/en-us/windows/python/scripting) which installs Python from the [Microsoft App Store](https://apps.microsoft.com/search?query=python). This ensures that you have the path variable set correctly.
 
 #### Get bpconnect code
-You can install [Git](https://git-scm.com/download/win) and clone the repo or download the [zipped repo](https://github.com/beep-projects/bpconnect/archive/refs/heads/main.zip) and extract it. For the following it is assumed, that the bpconnect code is saved in **C:\git\bpconnect**
+You can install [Git](https://git-scm.com/download/win) and clone the repo or download the [zipped repo](https://github.com/beep-projects/bpconnect/archive/refs/heads/main.zip) and extract it. For the following it is assumed, that the bpconnect code is saved in **C:\git\bpconnect**. If you saved the files in a different location, you have to change the instructions accordingly.
 
 #### Install dependencies
 Open the PowerShell and run
