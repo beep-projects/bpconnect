@@ -15,8 +15,9 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see https://www.gnu.org/licenses/
 # -------------------------------------------------------------------------------------------------
-"""Module that provides only class BPM"""
+"""Module that provides only static class BPM and abstract class BloodPressureMeter """
 from typing import Tuple
+from abc import ABC, abstractmethod
 
 
 class BPM:
@@ -201,3 +202,64 @@ class BPM:
         BPM.risk_index: -1,
         BPM.recommendation: '',
     }
+
+class BloodPressureMeter(ABC):
+  """Abstract class for implementing Beurer blood preassure meters"""
+
+  def __init__(self):
+    self.connected = False
+
+  @abstractmethod
+  def connect(self) -> bool:
+    """initialize a connection with the device"""
+    pass
+
+  @abstractmethod
+  def disconnect(self) -> bool:
+    """clean shut down of the connection with the device"""
+    pass
+
+  @abstractmethod
+  def get_name(self) -> str:
+    """get the device identifier
+
+    Returns:
+        name of the device
+    """
+    pass
+
+  @abstractmethod
+  def get_count(self) -> int:
+    """get the number of records stored on the device
+
+    Returns:
+        Number of Records
+    """
+    pass
+
+  @abstractmethod
+  def get_measurement(self, num: int) -> dict[str, any] | None:
+    """Get a specific measurement off the device
+
+    Args:
+        num: number of measurement to read.
+            Use :func: '~BeurerBM.get_count' to get the range of valid nums
+
+    Returns:
+        dict holding the values of the measurement or None.
+        The dict should have the following keys, if they are supported my the device
+        'systolic' = Systolic measurement in mmHg
+        'diastolic' = Diastolic measurement in mmHg
+        'pulse rate' = Pulse rate of the measurement in beats per minute
+        'TODO pulse pressure, date, time'
+        'day' = day of the measurement date
+        'month' = month of the measurement date
+        'year' = year of the measurement date
+        'hour' = hour of the measurement timestamp
+        'minute' = minute of the measurement timestamp
+        'user' = user id if supported by the device, or 0
+        'irregular heart beat' = True if irregular heart beat was detected else False
+        'risk index' = WHO risk assessment for this measurement
+        'recommendation' = recommendation to take action based on risk index
+    """
+    pass

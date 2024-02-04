@@ -18,9 +18,8 @@
 
 """Classes to connect to Beurer blood preassure meters"""
 
-from abc import ABC, abstractmethod
-from bpm import BPM
-from datetime import date, datetime
+from bpm import BPM, BloodPressureMeter
+from datetime import datetime
 import serial
 from serial import SerialException
 from serial.tools.list_ports import comports
@@ -29,69 +28,9 @@ from typing_extensions import override
 import usb.core
 
 
-class BeurerBM(ABC):
-  """Abstract class for implementing Beurer blood preassure meters"""
-
-  def __init__(self):
-    self.connected = False
-
-  @abstractmethod
-  def connect(self) -> bool:
-    """initialize a connection with the device"""
-    pass
-
-  @abstractmethod
-  def disconnect(self) -> bool:
-    """clean shut down of the connection with the device"""
-    pass
-
-  @abstractmethod
-  def get_name(self) -> str:
-    """get the device identifier
-
-    Returns:
-        name of the device
-    """
-    pass
-
-  @abstractmethod
-  def get_count(self) -> int:
-    """get the number of records stored on the device
-
-    Returns:
-        Number of Records
-    """
-    pass
-
-  @abstractmethod
-  def get_measurement(self, num: int) -> dict[str, any] | None:
-    """Get a specific measurement off the device
-
-    Args:
-        num: number of measurement to read.
-            Use :func: '~BeurerBM.get_count' to get the range of valid nums
-
-    Returns:
-        dict holding the values of the measurement or None.
-        The dict should have the following keys, if they are supported my the device
-        'systolic' = Systolic measurement in mmHg
-        'diastolic' = Diastolic measurement in mmHg
-        'pulse rate' = Pulse rate of the measurement in beats per minute
-        'TODO pulse pressure, date, time'
-        'day' = day of the measurement date
-        'month' = month of the measurement date
-        'year' = year of the measurement date
-        'hour' = hour of the measurement timestamp
-        'minute' = minute of the measurement timestamp
-        'user' = user id if supported by the device, or 0
-        'irregular heart beat' = True if irregular heart beat was detected else False
-        'risk index' = WHO risk assessment for this measurement
-        'recommendation' = recommendation to take action based on risk index
-    """
-    pass
 
 
-class BeurerBMSerial(BeurerBM):
+class BeurerBMSerial(BloodPressureMeter):
   """Class to support Beurer devices using a USB to serial converter
 
   Devices reported to have such a converter are older versions of BM58, BC58, BM65
@@ -181,7 +120,7 @@ class BeurerBMSerial(BeurerBM):
     return None
 
 
-class BeurerBMUSB(BeurerBM):
+class BeurerBMUSB(BloodPressureMeter):
   """Class to support Beurer devices using USB for communication
 
   This class was written and tested using a Beurer BM58
@@ -326,7 +265,7 @@ class BeurerBMUSB(BeurerBM):
     return measurement
 
 
-def find(device: str | None = None, timeout: int = 10) -> BeurerBM:
+def find(device: str | None = None, timeout: int = 10) -> BloodPressureMeter:
   """Find any Beurer blood preassure meter connected it to this machine
 
     First [device] is tested, if parameter is present, then
@@ -334,12 +273,12 @@ def find(device: str | None = None, timeout: int = 10) -> BeurerBM:
     and finally all available COM ports are checked
 
   Args:
-      device: device location for the BeurerBM
+      device: device location for the BloodPressureMeter
       timout: If device is not given, the search for a connected device
         on USB or COM will be done for [timeout] seconds
 
   Returns:
-      The BeurerBM object if found or None
+      The BloodPressureMeter object if found or None
   """
   if device is not None and _test_serial_device(device):
     return BeurerBMSerial(device)

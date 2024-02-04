@@ -17,7 +17,7 @@
 # along with this program.  If not, see https://www.gnu.org/licenses/
 # -------------------------------------------------------------------------------------------------
 
-"""Module to hold the internationalization string for bmconnect.py
+"""Module to hold the internationalization string for bpconnect.py
 
 Supported language codes are stored in text_lang:
   "de","en","es","fr","it","pl","ru","tr"
@@ -255,14 +255,14 @@ text = {
         "tr": "Parola",
     },
     "info_upload_note": {
-        "de": "von bmconnect eingetragen",
-        "en": "entered by bmconnect",
-        "es": "introducido por bmconnect",
-        "fr": "inscrit par bmconnect",
-        "it": "inserito da bmconnect",
-        "pl": "wpisany przez bmconnect",
-        "ru": "введено bmconnect",
-        "tr": "bmconnect tarafından girildi",
+        "de": "von bpconnect eingetragen",
+        "en": "entered by bpconnect",
+        "es": "introducido por bpconnect",
+        "fr": "inscrit par bpconnect",
+        "it": "inserito da bpconnect",
+        "pl": "wpisany przez bpconnect",
+        "ru": "введено bpconnect",
+        "tr": "bpconnect tarafından girildi",
     },
     "info_risk": {
         "de": "Risiko",
@@ -388,14 +388,14 @@ text = {
         "tr": "ölçüm eklendi",
     },
     "help_help": {
-        "de": "Zeigt diese Hilfe an und beendet bmconnect.",
-        "en": "Shows this help message and exits bmconnect.",
-        "es": "Muestra este mensaje de ayuda y sale.",
-        "fr": "Affiche ce message d'aide et quitte.",
-        "it": "Mostra questo messaggio di aiuto ed esce.",
-        "pl": "Wyświetla komunikat pomocy i kończy działanie.",
-        "ru": "Выводит сообщение о помощи и завершает работу.",
-        "tr": "Bu yardım mesajını gösterir ve çıkar.",
+        "de": "Zeigt diese Hilfe an und beendet bpconnect.",
+        "en": "Shows this help message and exits bpconnect.",
+        "es": "Muestra este mensaje de ayuda y sale de bpconnect.",
+        "fr": "Affiche ce message d'aide et quitte bpconnect.",
+        "it": "Mostra questo messaggio di aiuto ed esce da bpconnect.",
+        "pl": "Wyświetla ten komunikat pomocy i zamyka bpconnect.",
+        "ru": "Выводит это справочное сообщение и завершает работу bpconnect.",
+        "tr": "Bu yardım mesajını gösterir ve bpconnect'ten çıkar.",
     },
     "help_login": {
         "de": (
@@ -443,34 +443,34 @@ text = {
     "help_offline": {
         "de": (
             "Deaktiviert die Synchronisierung mit einem Garmin Connect-Konto. Nützlich, wenn Du nur"
-            " bp_report.py verwenden möchtest. Diese Option wird nicht gespeichert."
+            " bpreport.py verwenden möchtest. Diese Option wird nicht gespeichert."
         ),
         "en": (
             "Deactivates synchronization with a Garmin Connect account. Useful if you only want to"
-            " use bp_report.py. This option is not saved."
+            " use bpreport.py. This option is not saved."
         ),
         "es": (
             "Desactiva la sincronización con una cuenta de Garmin Connect. Útil si sólo desea"
-            " utilizar bp_report.py. Esta opción no se guarda."
+            " utilizar bpreport.py. Esta opción no se guarda."
         ),
         "fr": (
             "Désactive la synchronisation avec un compte Garmin Connect. Utile si tu ne veux"
-            " utiliser que bp_report.py. Cette option n'est pas enregistrée."
+            " utiliser que bpreport.py. Cette option n'est pas enregistrée."
         ),
         "it": (
             "Disattiva la sincronizzazione con un account Garmin Connect. Utile se si desidera"
-            " utilizzare solo bp_report.py. Questa opzione non viene salvata."
+            " utilizzare solo bpreport.py. Questa opzione non viene salvata."
         ),
         "pl": (
             "Dezaktywuje synchronizację z kontem Garmin Connect. Przydatne, jeśli chcesz używać"
-            " tylko bp_report.py. Ta opcja nie jest zapisywana."
+            " tylko bpreport.py. Ta opcja nie jest zapisywana."
         ),
         "ru": (
             "Отключает синхронизацию с учетной записью Garmin Connect. Полезно, если вы хотите"
-            " использовать только bp_report.py. Этот параметр не сохраняется."
+            " использовать только bpreport.py. Этот параметр не сохраняется."
         ),
         "tr": (
-            "Garmin Connect hesabı ile senkronizasyonu devre dışı bırakır. Yalnızca bp_report.py"
+            "Garmin Connect hesabı ile senkronizasyonu devre dışı bırakır. Yalnızca bpreport.py"
             " kullanmak istiyorsanız kullanışlıdır. Bu seçenek kaydedilmez."
         ),
     },
@@ -555,72 +555,61 @@ text = {
     },
     "help_ignore": {
         "de": (
-            "Weist bmconnect an, die in den Messungen gespeicherte Benutzerkennung zu ignorieren."
+            "Weist bpconnect an, die in den Messungen gespeicherte Benutzerkennung zu ignorieren."
             " Wird für Geräte benötigt, die keine Benutzer-ID in den Messwerten unterstützen, aber"
             " mehrere Benutzer auf dem Gerät zur Auswahl haben."
         ),
         "en": (
-            "Tells bmconnect to ignore the user id stored in the measurements. Needed for devices,"
+            "Tells bpconnect to ignore the user id stored in the measurements. Needed for devices,"
             " that do not support user id in the readouts, but have multiple users on the device"
             " for selection."
         ),
         "es": (
-            "Indica a bmconnect que ignore el identificador de usuario almacenado en las"
+            "Indica a bpconnect que ignore el identificador de usuario almacenado en las"
             " mediciones. Necesario para dispositivos que no admiten ID de usuario en las lecturas,"
             " pero que tienen varios usuarios en el dispositivo para su selección."
         ),
         "fr": (
-            "Indique à bmconnect d'ignorer l'identifiant de l'utilisateur stocké dans les mesures."
+            "Indique à bpconnect d'ignorer l'identifiant de l'utilisateur stocké dans les mesures."
             " Nécessaire pour les appareils qui ne supportent pas l'identifiant de l'utilisateur"
             " dans les relevés, mais qui ont plusieurs utilisateurs sur l'appareil pour la"
             " sélection."
         ),
         "it": (
-            "Indica a bmconnect di ignorare l'id utente memorizzato nelle misurazioni. Necessario"
+            "Indica a bpconnect di ignorare l'id utente memorizzato nelle misurazioni. Necessario"
             " per i dispositivi che non supportano l'id utente nelle letture, ma che hanno più"
             " utenti sul dispositivo per la selezione."
         ),
         "pl": (
-            "Mówi bmconnect, aby ignorował identyfikator użytkownika przechowywany w pomiarach."
+            "Mówi bpconnect, aby ignorował identyfikator użytkownika przechowywany w pomiarach."
             " Wymagane w przypadku urządzeń, które nie obsługują identyfikatora użytkownika w"
             " odczytach, ale mają wielu użytkowników na urządzeniu do wyboru."
         ),
         "ru": (
-            "Указывает bmconnect игнорировать идентификатор пользователя, хранящийся в измерениях."
+            "Указывает bpconnect игнорировать идентификатор пользователя, хранящийся в измерениях."
             " Необходим для устройств, которые не поддерживают идентификатор пользователя в"
             " показаниях, но имеют несколько пользователей на устройстве для выбора."
         ),
         "tr": (
-            "bmconnect'e ölçümlerde saklanan kullanıcı kimliğini göz ardı etmesini söyler."
+            "bpconnect'e ölçümlerde saklanan kullanıcı kimliğini göz ardı etmesini söyler."
             " Okumalarda kullanıcı kimliğini desteklemeyen, ancak seçim için cihazda birden fazla"
             " kullanıcı bulunan cihazlar için gereklidir."
         ),
     },
     "help_language": {
         "de": (
-            "Konfiguriert die von bmconnect/bp_report verwendete Sprache. Diese Option wird gespeichert."
+            "Konfiguriert die von bpconnect/bpreport verwendete Sprache. Diese Option wird"
+            " gespeichert."
         ),
-        "en": (
-            "Configures the language used by bmconnect/bp_report. This option is saved."
-        ),
-        "es": (
-            "Configura el idioma utilizado por bmconnect/bp_report. Esta opción se guarda."
-        ),
-        "fr": (
-            "Configure la langue utilisée par bmconnect/bp_report. Cette option est sauvegardée."
-        ),
+        "en": "Configures the language used by bpconnect/bpreport. This option is saved.",
+        "es": "Configura el idioma utilizado por bpconnect/bpreport. Esta opción se guarda.",
+        "fr": "Configure la langue utilisée par bpconnect/bpreport. Cette option est sauvegardée.",
         "it": (
-            "Configura la lingua utilizzata da bmconnect/bp_report. Questa opzione viene salvata."
+            "Configura la lingua utilizzata da bpconnect/bpreport. Questa opzione viene salvata."
         ),
-        "pl": (
-            "Konfiguruje język używany przez bmconnect/bp_report. Ta opcja jest zapisywana."
-        ),
-        "ru": (
-            "Настройка языка, используемого bmconnect/bp_report. Этот параметр сохраняется."
-        ),
-        "tr": (
-            "bmconnect/bp_report tarafından kullanılan dili yapılandırır. Bu seçenek kaydedilir."
-        ),
+        "pl": "Konfiguruje język używany przez bpconnect/bpreport. Ta opcja jest zapisywana.",
+        "ru": "Настройка языка, используемого bpconnect/bpreport. Этот параметр сохраняется.",
+        "tr": "bpconnect/bpreport tarafından kullanılan dili yapılandırır. Bu seçenek kaydedilir.",
     },
     "help_save_locally": {
         "de": (
@@ -760,54 +749,102 @@ text = {
     },
     "help_start_date": {
         "de": (
-            "Startdatum des Protokollzeitraums, das in Verbindung mit --end_date verwendet wird, um den tatsächlichen Zeitraum anzugeben, für den das Protokoll erstellt wird. Das Datum muss in jedem gültigen ISO 8601-Format angegeben werden (z. B. 2021-06-11, 20210611, 2021-W23-5), ausgenommen Ordnungszahlen (z. B. 2021-162)"
+            "Startdatum des Protokollzeitraums, das in Verbindung mit --end_date verwendet wird, um"
+            " den tatsächlichen Zeitraum anzugeben, für den das Protokoll erstellt wird. Das Datum"
+            " muss in jedem gültigen ISO 8601-Format angegeben werden (z. B. 2021-06-11, 20210611,"
+            " 2021-W23-5), ausgenommen Ordnungszahlen (z. B. 2021-162)"
         ),
         "en": (
-            "Start date of the reporting period which is used in conjunction with --end_date to specify the actual period the report is generated for. The date must be specified in any valid ISO 8601 format (e.g. 2021-06-11, 20210611, 2021-W23-5), except ordinal numbers (e.g. 2021-162)"
+            "Start date of the reporting period which is used in conjunction with --end_date to"
+            " specify the actual period the report is generated for. The date must be specified in"
+            " any valid ISO 8601 format (e.g. 2021-06-11, 20210611, 2021-W23-5), except ordinal"
+            " numbers (e.g. 2021-162)"
         ),
         "es": (
-            "Fecha de inicio del periodo del informe que se utiliza junto con --end_date para especificar el periodo real para el que se genera el informe. La fecha debe especificarse en cualquier formato ISO 8601 válido (por ejemplo, 2021-06-11, 20210611, 2021-W23-5), excepto los números ordinales (por ejemplo, 2021-162)."
+            "Fecha de inicio del periodo del informe que se utiliza junto con --end_date para"
+            " especificar el periodo real para el que se genera el informe. La fecha debe"
+            " especificarse en cualquier formato ISO 8601 válido (por ejemplo, 2021-06-11,"
+            " 20210611, 2021-W23-5), excepto los números ordinales (por ejemplo, 2021-162)."
         ),
         "fr": (
-            "Date de début de la période de déclaration, utilisée conjointement avec --end_date pour spécifier la période réelle pour laquelle le rapport est généré. La date doit être spécifiée dans n'importe quel format ISO 8601 valide (par exemple 2021-06-11, 20210611, 2021-W23-5), à l'exception des nombres ordinaux (par exemple 2021-162)."
+            "Date de début de la période de déclaration, utilisée conjointement avec --end_date"
+            " pour spécifier la période réelle pour laquelle le rapport est généré. La date doit"
+            " être spécifiée dans n'importe quel format ISO 8601 valide (par exemple 2021-06-11,"
+            " 20210611, 2021-W23-5), à l'exception des nombres ordinaux (par exemple 2021-162)."
         ),
         "it": (
-            "Data di inizio del periodo di rendicontazione, utilizzata insieme a --end_date per specificare il periodo effettivo per il quale viene generato il report. La data deve essere specificata in qualsiasi formato ISO 8601 valido (ad esempio, 2021-06-11, 20210611, 2021-W23-5), ad eccezione dei numeri ordinali (ad esempio, 2021-162)."
+            "Data di inizio del periodo di rendicontazione, utilizzata insieme a --end_date per"
+            " specificare il periodo effettivo per il quale viene generato il report. La data deve"
+            " essere specificata in qualsiasi formato ISO 8601 valido (ad esempio, 2021-06-11,"
+            " 20210611, 2021-W23-5), ad eccezione dei numeri ordinali (ad esempio, 2021-162)."
         ),
         "pl": (
-            "Data rozpoczęcia okresu raportowania, która jest używana w połączeniu z --end_date w celu określenia rzeczywistego okresu, dla którego generowany jest raport. Data musi być określona w dowolnym prawidłowym formacie ISO 8601 (np. 2021-06-11, 20210611, 2021-W23-5), z wyjątkiem liczb porządkowych (np. 2021-162)."
+            "Data rozpoczęcia okresu raportowania, która jest używana w połączeniu z --end_date w"
+            " celu określenia rzeczywistego okresu, dla którego generowany jest raport. Data musi"
+            " być określona w dowolnym prawidłowym formacie ISO 8601 (np. 2021-06-11, 20210611,"
+            " 2021-W23-5), z wyjątkiem liczb porządkowych (np. 2021-162)."
         ),
         "ru": (
-            "Дата начала отчетного периода, которая используется в сочетании с --end_date для указания фактического периода, за который формируется отчет. Дата должна быть указана в любом допустимом формате ISO 8601 (например, 2021-06-11, 20210611, 2021-W23-5), кроме порядковых номеров (например, 2021-162)."
+            "Дата начала отчетного периода, которая используется в сочетании с --end_date для"
+            " указания фактического периода, за который формируется отчет. Дата должна быть указана"
+            " в любом допустимом формате ISO 8601 (например, 2021-06-11, 20210611, 2021-W23-5),"
+            " кроме порядковых номеров (например, 2021-162)."
         ),
         "tr": (
-            "Raporun oluşturulduğu gerçek dönemi belirtmek için --end_date ile birlikte kullanılan raporlama döneminin başlangıç tarihi. Tarih, sıra numaraları (örneğin 2021-162) hariç, geçerli herhangi bir ISO 8601 biçiminde (örneğin 2021-06-11, 20210611, 2021-W23-5) belirtilmelidir"
+            "Raporun oluşturulduğu gerçek dönemi belirtmek için --end_date ile birlikte kullanılan"
+            " raporlama döneminin başlangıç tarihi. Tarih, sıra numaraları (örneğin 2021-162)"
+            " hariç, geçerli herhangi bir ISO 8601 biçiminde (örneğin 2021-06-11, 20210611,"
+            " 2021-W23-5) belirtilmelidir"
         ),
     },
     "help_end_date": {
         "de": (
-            "Enddatum des Protokollzeitraums, das in Verbindung mit --start_date verwendet wird, um den tatsächlichen Zeitraum anzugeben, für den das Protokoll erstellt wird. Das Datum muss in jedem gültigen ISO 8601-Format angegeben werden (z. B. 2021-06-11, 20210611, 2021-W23-5), ausgenommen Ordnungszahlen (z. B. 2021-162)"
+            "Enddatum des Protokollzeitraums, das in Verbindung mit --start_date verwendet wird, um"
+            " den tatsächlichen Zeitraum anzugeben, für den das Protokoll erstellt wird. Das Datum"
+            " muss in jedem gültigen ISO 8601-Format angegeben werden (z. B. 2021-06-11, 20210611,"
+            " 2021-W23-5), ausgenommen Ordnungszahlen (z. B. 2021-162)"
         ),
         "en": (
-            "End date of the reporting period which is used in conjunction with --start_date to specify the actual period the report is generated for. The date must be specified in any valid ISO 8601 format (e.g. 2021-06-11, 20210611, 2021-W23-5), except ordinal numbers (e.g. 2021-162)"
+            "End date of the reporting period which is used in conjunction with --start_date to"
+            " specify the actual period the report is generated for. The date must be specified in"
+            " any valid ISO 8601 format (e.g. 2021-06-11, 20210611, 2021-W23-5), except ordinal"
+            " numbers (e.g. 2021-162)"
         ),
         "es": (
-            "Fecha final del periodo del informe que se utiliza junto con --start_date para especificar el periodo real para el que se genera el informe. La fecha debe especificarse en cualquier formato ISO 8601 válido (por ejemplo, 2021-06-11, 20210611, 2021-W23-5), excepto los números ordinales (por ejemplo, 2021-162)."
+            "Fecha final del periodo del informe que se utiliza junto con --start_date para"
+            " especificar el periodo real para el que se genera el informe. La fecha debe"
+            " especificarse en cualquier formato ISO 8601 válido (por ejemplo, 2021-06-11,"
+            " 20210611, 2021-W23-5), excepto los números ordinales (por ejemplo, 2021-162)."
         ),
         "fr": (
-            "Date de fin de la période de déclaration, utilisée conjointement avec --start_date pour spécifier la période réelle pour laquelle le rapport est généré. La date doit être spécifiée dans n'importe quel format ISO 8601 valide (par exemple 2021-06-11, 20210611, 2021-W23-5), à l'exception des nombres ordinaux (par exemple 2021-162)."
+            "Date de fin de la période de déclaration, utilisée conjointement avec --start_date"
+            " pour spécifier la période réelle pour laquelle le rapport est généré. La date doit"
+            " être spécifiée dans n'importe quel format ISO 8601 valide (par exemple 2021-06-11,"
+            " 20210611, 2021-W23-5), à l'exception des nombres ordinaux (par exemple 2021-162)."
         ),
         "it": (
-            "Data di fine del periodo di rendicontazione, utilizzata insieme a --start_date per specificare il periodo effettivo per cui viene generato il report. La data deve essere specificata in qualsiasi formato ISO 8601 valido (ad esempio, 2021-06-11, 20210611, 2021-W23-5), ad eccezione dei numeri ordinali (ad esempio, 2021-162)."
+            "Data di fine del periodo di rendicontazione, utilizzata insieme a --start_date per"
+            " specificare il periodo effettivo per cui viene generato il report. La data deve"
+            " essere specificata in qualsiasi formato ISO 8601 valido (ad esempio, 2021-06-11,"
+            " 20210611, 2021-W23-5), ad eccezione dei numeri ordinali (ad esempio, 2021-162)."
         ),
         "pl": (
-            "Data końcowa okresu raportowania, która jest używana w połączeniu z --start_date w celu określenia rzeczywistego okresu, dla którego generowany jest raport. Data musi być podana w dowolnym prawidłowym formacie ISO 8601 (np. 2021-06-11, 20210611, 2021-W23-5), z wyjątkiem liczb porządkowych (np. 2021-162)."
+            "Data końcowa okresu raportowania, która jest używana w połączeniu z --start_date w"
+            " celu określenia rzeczywistego okresu, dla którego generowany jest raport. Data musi"
+            " być podana w dowolnym prawidłowym formacie ISO 8601 (np. 2021-06-11, 20210611,"
+            " 2021-W23-5), z wyjątkiem liczb porządkowych (np. 2021-162)."
         ),
         "ru": (
-            "Дата окончания отчетного периода, которая используется в сочетании с --start_date для указания фактического периода, за который формируется отчет. Дата должна быть указана в любом допустимом формате ISO 8601 (например, 2021-06-11, 20210611, 2021-W23-5), кроме порядковых номеров (например, 2021-162)."
+            "Дата окончания отчетного периода, которая используется в сочетании с --start_date для"
+            " указания фактического периода, за который формируется отчет. Дата должна быть указана"
+            " в любом допустимом формате ISO 8601 (например, 2021-06-11, 20210611, 2021-W23-5),"
+            " кроме порядковых номеров (например, 2021-162)."
         ),
         "tr": (
-            "Raporun oluşturulduğu gerçek dönemi belirtmek için --start_date ile birlikte kullanılan raporlama döneminin bitiş tarihi. Tarih, sıra numaraları (örn. 2021-162) hariç, geçerli herhangi bir ISO 8601 biçiminde (örn. 2021-06-11, 20210611, 2021-W23-5) belirtilmelidir"
+            "Raporun oluşturulduğu gerçek dönemi belirtmek için --start_date ile birlikte"
+            " kullanılan raporlama döneminin bitiş tarihi. Tarih, sıra numaraları (örn. 2021-162)"
+            " hariç, geçerli herhangi bir ISO 8601 biçiminde (örn. 2021-06-11, 20210611,"
+            " 2021-W23-5) belirtilmelidir"
         ),
     },
     "help_gender": {
@@ -1060,14 +1097,14 @@ text = {
         "tr": "Notlar",
     },
     "template_document_footer_date": {
-        "de": "erstellt mit bp_report am",
-        "en": "created with bp_report on",
-        "es": "creado con bp_report en",
-        "fr": "créé avec bp_report le",
-        "it": "creato con bp_report su",
-        "pl": "utworzony za pomocą bp_report on",
-        "ru": "созданный с помощью bp_report на",
-        "tr": "tarihinde bp_report ile oluşturulmuştur",
+        "de": "erstellt mit bpreport am",
+        "en": "created with bpreport on",
+        "es": "creado con bpreport en",
+        "fr": "créé avec bpreport le",
+        "it": "creato con bpreport su",
+        "pl": "utworzony za pomocą bpreport on",
+        "ru": "созданный с помощью bpreport на",
+        "tr": "tarihinde bpreport ile oluşturulmuştur",
     },
     "template_abbrev_years": {
         "de": "J.",

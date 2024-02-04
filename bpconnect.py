@@ -27,7 +27,7 @@ import copy
 from datetime import date, datetime, timedelta
 import hashlib
 import beurerbm
-from bmconnect_i18n import text_lang, text
+from bpconnect_i18n import text_lang, text
 from garth.exc import GarthHTTPError
 from garminconnect import Garmin, GarminConnectAuthenticationError
 from getpass import getpass
@@ -36,12 +36,12 @@ import pandas as pd
 from pathlib import Path
 import requests
 
-data_folder = Path.home() / '.bmconnect'
+data_folder = Path.home() / '.bpconnect'
 conf_file = data_folder / 'conf.json'
 data_file = data_folder / 'measurements.feather'
 users = {}
-default_beurer_user_id = 1
-beurer_user_id = default_beurer_user_id
+default_user_id = 1
+user_id = default_user_id
 ignore_measurement_user_id = False
 lang = 'en'
 save_locally = False
@@ -57,7 +57,7 @@ def _login():
     garmin.login()
     name = garmin.get_full_name()
     print(f'{text["info_login_success_as"][lang]}: {name}')
-    users[str(beurer_user_id)] = {'garmin_email': garmin_email, 'garmin_password': garmin_password}
+    users[str(user_id)] = {'garmin_email': garmin_email, 'garmin_password': garmin_password}
     _write_config()
   except (
       FileNotFoundError,
@@ -72,7 +72,7 @@ def _init_garmin_connect():
   """Initialize connection to Garmin Connect with your credentials."""
 
   try:
-    tokenfolder = data_folder / f'oauth{beurer_user_id}'
+    tokenfolder = data_folder / f'oauth{user_id}'
     print(f'{text["info_trying_gc_login"][lang]} "{tokenfolder}"...')
     garmin = Garmin()
     garmin.login(tokenfolder)
@@ -84,12 +84,12 @@ def _init_garmin_connect():
   ):
     print(text['info_login_failed_trying_email_pw'][lang])
     try:
-      credentials = users.get(str(beurer_user_id))
+      credentials = users.get(str(user_id))
       if credentials is None:
         # garmin_email, garmin_password = _get_credentials()
         # Save tokens for next login
         # _write_config()
-        print(f'[bmconnect:_init_garmin_connect] Error: {text["error_no_credentials"][lang]}')
+        print(f'[bpconnect:_init_garmin_connect] Error: {text["error_no_credentials"][lang]}')
         return None
       print(text['info_found_credentials_in_config'][lang])
       garmin = Garmin(credentials['garmin_email'], credentials['garmin_password'])
@@ -118,15 +118,15 @@ def _get_credentials():
 def _read_config():
   global lang
   global users
-  global default_beurer_user_id
+  global default_user_id
   global save_locally
   # global measurement_history
-  # print(f'[bmconnect:_read_config] {conf_file}')
+  # print(f'[bpconnect:_read_config] {conf_file}')
   try:
     with conf_file.open() as f:
       config = json.load(f)
       lang = config.get('lang', 'en')
-      default_beurer_user_id = config.get('default_beurer_user_id', 1)
+      default_user_id = config.get('default_user_id', 1)
       save_locally = config.get('save_locally', False)
       users = config.get('users', {})
       for key in users:
@@ -152,14 +152,14 @@ def _write_config():
       json.dump(
           {
               'lang': lang,
-              'default_beurer_user_id': default_beurer_user_id,
+              'default_user_id': default_user_id,
               'save_locally': save_locally,
               'users': json_users,
           },
           f,
       )
   except (PermissionError, IOError, OSError) as e:
-    print('[bmconnect:_write_config] Error: ', e)
+    print('[bpconnect:_write_config] Error: ', e)
 
 
 def _get_all_measurements():
@@ -216,11 +216,11 @@ def _get_measurement_hashes_from_gc(gc: Garmin, dayspan=max_age_days) -> [str]:
       dt = datetime.fromisoformat(measurement['measurementTimestampLocal'])
       m[BPM.date] = dt.date()
       m[BPM.time] = dt.time()
-      #m[BPM.day] = dt.day
-      #m[BPM.month] = dt.month
-      #m[BPM.year] = dt.year
-      #m[BPM.hour] = dt.hour
-      #m[BPM.minute] = dt.minute
+      # m[BPM.day] = dt.day
+      # m[BPM.month] = dt.month
+      # m[BPM.year] = dt.year
+      # m[BPM.hour] = dt.hour
+      # m[BPM.minute] = dt.minute
       m[BPM.user] = 0
       # ignored by hash, so not worth parsing back
       m[BPM.irregular_heart_beat] = False
@@ -242,7 +242,7 @@ def _sync_measurements_to_gc(measurements):
       continue
     m_hash = _get_measurement_hash(m)
     if m_hash not in measurement_history_from_gc and (
-        ignore_measurement_user_id or m[BPM.user] == 0 or m[BPM.user] == beurer_user_id
+        ignore_measurement_user_id or m[BPM.user] == 0 or m[BPM.user] == user_id
     ):
       if not gc:
         gc = _init_garmin_connect()
@@ -360,8 +360,8 @@ def _get_args():
 
 
 def main():
-  global default_beurer_user_id
-  global beurer_user_id
+  global default_user_id
+  global user_id
   global ignore_measurement_user_id
   global lang
   global save_locally
@@ -369,14 +369,14 @@ def main():
   args = _get_args()
 
   if args.default_user:
-    default_beurer_user_id = args.default_user
+    default_user_id = args.default_user
 
   if args.user:
-    beurer_user_id = args.user
+    user_id = args.user
   else:
-    beurer_user_id = default_beurer_user_id
+    user_id = default_user_id
 
-  if args.ignore_measurement_user_id or beurer_user_id not in [1, 2]:
+  if args.ignore_measurement_user_id or user_id not in [1, 2]:
     ignore_measurement_user_id = True
 
   if args.lang:

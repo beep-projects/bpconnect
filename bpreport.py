@@ -22,7 +22,7 @@ and upload them to Garmin Connect
 
 import argparse
 from bpm import BPM
-from bmconnect_i18n import text_lang, text
+from bpconnect_i18n import text_lang, text
 from datetime import date, datetime
 import json
 import numpy as np
@@ -36,10 +36,10 @@ import sys
 
 report_folder = Path(os.path.dirname(os.path.abspath(__file__))) / 'report'
 sys.path.append(report_folder)
-from report.bp_report_template import BpReportTemplate
+from report.bpreport_template import BpReportTemplate # pylint: disable=wrong-import-position
 
-data_folder = Path.home() / '.bmconnect'
-conf_file = data_folder / 'bp_report_conf.json'
+data_folder = Path.home() / '.bpconnect'
+conf_file = data_folder / 'bpreport_conf.json'
 data_file = data_folder / 'measurements.feather'
 font_folder = report_folder / 'fonts'
 
@@ -106,7 +106,7 @@ def _read_config():
     # if the file does not exist, it will be created with default values
     pass
   except ValueError as e:
-    print(f'[bp_report.py:_read_config] Error: {e}')
+    print(f'[bpreport.py:_read_config] Error: {e}')
     pass
 
 
@@ -120,17 +120,17 @@ def _write_config():
     with conf_file.open('w') as f:
       json.dump(config, f)
   except (PermissionError, IOError, OSError) as e:
-    print(f'[bp_report.py:_write_config] Error: {e}')
+    print(f'[bpreport.py:_write_config] Error: {e}')
 
 
 def _read_measurements():
   try:
     df = pd.read_feather(data_file)
   except FileNotFoundError as e:
-    print(f'[bp_report.py:_read_measurements] Error: {e}')
+    print(f'[bpreport.py:_read_measurements] Error: {e}')
     df = pd.DataFrame()
   if not all(k in list(df.columns) for k in BPM.keys):
-    print(f'[bp_report.py:_read_measurements] Error: {data_file} is not a valid measurement file')
+    print(f'[bpreport.py:_read_measurements] Error: {data_file} is not a valid measurement file')
     return None
   return df
 
@@ -169,7 +169,7 @@ def _bp_scatter_plot(df, block=True):
   ax = fig.add_axes([0.1, 0.15, 0.85, 0.75])
 
   ax.margins(x=0.2, y=0.2)
-  alpha = max(0.1, 20/len(xvals))
+  alpha = max(0.1, 20 / len(xvals))
   ax.scatter(xvals, yvals, alpha=alpha, marker='.', s=150, linewidth=0.0, color='black')
   ax.imshow(
       backgr[:-1, :-1],
@@ -338,31 +338,108 @@ def _bp_measurement_series(df, block=True):
   # set date as index for grouping
   df = df.set_index('date')
   # add systolic min max avg per day
-  df = df.groupby(df.index)[[BPM.systolic, BPM.diastolic, BPM.pulse_pressure]].agg(['min', 'max', 'mean'])
+  df = df.groupby(df.index)[[BPM.systolic, BPM.diastolic, BPM.pulse_pressure]].agg(
+      ['min', 'max', 'mean']
+  )
   # flatten the GroupBy object
-  df.columns  = [f'{BPM.systolic}_min', f'{BPM.systolic}_max', f'{BPM.systolic}_mean', f'{BPM.diastolic}_min', f'{BPM.diastolic}_max', f'{BPM.diastolic}_mean', f'{BPM.pulse_pressure}_min', f'{BPM.pulse_pressure}_max', f'{BPM.pulse_pressure}_mean']
+  df.columns = [
+      f'{BPM.systolic}_min',
+      f'{BPM.systolic}_max',
+      f'{BPM.systolic}_mean',
+      f'{BPM.diastolic}_min',
+      f'{BPM.diastolic}_max',
+      f'{BPM.diastolic}_mean',
+      f'{BPM.pulse_pressure}_min',
+      f'{BPM.pulse_pressure}_max',
+      f'{BPM.pulse_pressure}_mean',
+  ]
   df = df.reset_index()
   # add risk_index column for daily averages
-  df['risk_index'] = [ BPM.get_risk_assessment(row[f'{BPM.systolic}_mean'], row[f'{BPM.diastolic}_mean'])[0] for index, row in df.iterrows()]
+  df['risk_index'] = [
+      BPM.get_risk_assessment(row[f'{BPM.systolic}_mean'], row[f'{BPM.diastolic}_mean'])[0]
+      for index, row in df.iterrows()
+  ]
   # create figure
   fig = plt.figure(figsize=figsize_full_width)
   ax = fig.add_axes([0.1, 0.15, 0.85, 0.75])
-  ax.plot(df[BPM.date], df[f'{BPM.systolic}_mean'], color=color_systolic, label=text['plot_label_systolic'][lang], zorder=3)
-  ax.fill_between(df[BPM.date], df[f'{BPM.systolic}_min'], df[f'{BPM.systolic}_max'], color=color_systolic, alpha=.15, zorder=2)
-  ax.plot(df[BPM.date], df[f'{BPM.diastolic}_mean'], color=color_diastolic, label=text['plot_label_diastolic'][lang], zorder=3)
-  ax.fill_between(df[BPM.date], df[f'{BPM.diastolic}_min'], df[f'{BPM.diastolic}_max'], color=color_diastolic, alpha=.15, zorder=2)
+  ax.plot(
+      df[BPM.date],
+      df[f'{BPM.systolic}_mean'],
+      color=color_systolic,
+      label=text['plot_label_systolic'][lang],
+      zorder=3,
+  )
+  ax.fill_between(
+      df[BPM.date],
+      df[f'{BPM.systolic}_min'],
+      df[f'{BPM.systolic}_max'],
+      color=color_systolic,
+      alpha=0.15,
+      zorder=2,
+  )
+  ax.plot(
+      df[BPM.date],
+      df[f'{BPM.diastolic}_mean'],
+      color=color_diastolic,
+      label=text['plot_label_diastolic'][lang],
+      zorder=3,
+  )
+  ax.fill_between(
+      df[BPM.date],
+      df[f'{BPM.diastolic}_min'],
+      df[f'{BPM.diastolic}_max'],
+      color=color_diastolic,
+      alpha=0.15,
+      zorder=2,
+  )
   # add markers with category colors
   for risk_index in range(0, len(colors_category)):
     dates = df[df['risk_index'] == risk_index][BPM.date]
     systolic_mean = df[df['risk_index'] == risk_index][f'{BPM.systolic}_mean']
     diastolic_mean = df[df['risk_index'] == risk_index][f'{BPM.diastolic}_mean']
-    ax.plot(dates, systolic_mean, linestyle='None', marker='.', markersize=10, color=colors_category[risk_index], zorder=4)
-    ax.plot(dates, diastolic_mean, linestyle='None', marker='.', markersize=10, color=colors_category[risk_index], zorder=4)
-    ax.plot((dates,dates),(systolic_mean, diastolic_mean), linewidth=5, color=colors_category[risk_index], alpha=0.5, zorder=1)
-  
-  ax.plot(df[BPM.date], df[f'{BPM.pulse_pressure}_mean'], color=color_pulse_pressure, label=text['plot_label_pulse_pressure'][lang], zorder=3)
-  ax.fill_between(df[BPM.date], df[f'{BPM.pulse_pressure}_min'], df[f'{BPM.pulse_pressure}_max'], color=color_pulse_pressure, alpha=.15, zorder=2)
-  
+    ax.plot(
+        dates,
+        systolic_mean,
+        linestyle='None',
+        marker='.',
+        markersize=10,
+        color=colors_category[risk_index],
+        zorder=4,
+    )
+    ax.plot(
+        dates,
+        diastolic_mean,
+        linestyle='None',
+        marker='.',
+        markersize=10,
+        color=colors_category[risk_index],
+        zorder=4,
+    )
+    ax.plot(
+        (dates, dates),
+        (systolic_mean, diastolic_mean),
+        linewidth=5,
+        color=colors_category[risk_index],
+        alpha=0.5,
+        zorder=1,
+    )
+
+  ax.plot(
+      df[BPM.date],
+      df[f'{BPM.pulse_pressure}_mean'],
+      color=color_pulse_pressure,
+      label=text['plot_label_pulse_pressure'][lang],
+      zorder=3,
+  )
+  ax.fill_between(
+      df[BPM.date],
+      df[f'{BPM.pulse_pressure}_min'],
+      df[f'{BPM.pulse_pressure}_max'],
+      color=color_pulse_pressure,
+      alpha=0.15,
+      zorder=2,
+  )
+
   # set title and labels
   plt.xlabel(text['plot_label_date'][lang], **font_plot_ax_label)
   plt.ylabel(text['plot_label_pressure'][lang], **font_plot_ax_label)
@@ -493,21 +570,16 @@ def main():
 
   df = _read_measurements().reset_index(drop=True)
   if df is not None:
-    # prepare df
-    # add date colimn
-    #df.loc[:, 'date'] = pd.to_datetime(df[BPM.year]*10000+df[BPM.month]*100+df[BPM.day],format='%Y%m%d')
-    # remove unwanted dates
+    # drop unwanted measurements
     if start_date:
       df = df.drop(df[(df[BPM.date] < start_date)].index)
     if end_date:
       df = df.drop(df[(df[BPM.date] > end_date)].index)
-    # add pulse pressure
-    #df.loc[:, 'pulse_pressure'] = df[BPM.systolic] - df[BPM.diastolic]
-    
-    print(f'[bp_report.py:main] {len(df)} measurements loaded')
+
+    print(f'[bpreport.py:main] {len(df)} measurements loaded')
     fig_measurement_series = _bp_measurement_series(df, block=False)
     _save_fig(fig_measurement_series, (report_folder / 'measurement_series.svg'))
-    
+
     fig_scatter = _bp_scatter_plot(df, block=False)
     _save_fig(fig_scatter, (report_folder / 'scatter.svg'))
 
@@ -517,12 +589,12 @@ def main():
     fig_pdfs = _bp_pdfs(df, block=False)
     _save_fig(fig_pdfs, (report_folder / 'pdfs.svg'))
 
-    report = BpReportTemplate(report_folder, 'report_template.html')
+    report = BpReportTemplate(report_folder, 'bpreport_template.html')
     report.set_name(name)
     report.set_birthday_gender(birthday, gender)
     report.set_data(df)
     report.translate_template(text, lang)
-    report.save_as_pdf(report_folder / f'bp_report_{time_postfix}.pdf')
+    report.save_as_pdf(report_folder / f'bpreport_{time_postfix}.pdf')
 
 
 if __name__ == '__main__':

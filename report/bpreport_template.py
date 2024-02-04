@@ -17,7 +17,7 @@
 # along with this program.  If not, see https://www.gnu.org/licenses/
 # -------------------------------------------------------------------------------------------------
 
-"""Module used by bp_report.py, which provides class BpReportTemplate"""
+"""Module used by bpreport.py, which provides class BpReportTemplate"""
 
 
 import xhtml2pdf.pisa as pisa
@@ -30,16 +30,16 @@ from bpm import BPM
 
 
 class BpReportTemplate:
-  """Helper class for bp_report.py to manage the handling/filling of the report template"""
+  """Helper class for bpreport.py to manage the handling/filling of the report template"""
 
   template_folder = Path('.')
-  template_file = 'report_template.html'
+  template_file = 'bpreport_template.html'
   html = None
 
   def __init__(self, template_folder, template_file):
     self.template_folder = Path(template_folder)
     self.template_file = template_file
-    print(f'[bp_report_template.py:__init__] using template file: {self.template_folder / template_file}')
+    print(f'[bpreport_template.py:__init__] using template file: {self.template_folder / template_file}')
     with open(self.template_folder / self.template_file, 'r', encoding='utf-8') as f:
       self.html = f.read()
 
@@ -130,6 +130,6 @@ class BpReportTemplate:
         encoding='utf-8',
         path=f'{self.template_folder / self.template_file}'
     )
-    print(f'[bp_report_template.py:saveAsPDF] PDF saved to: {filepath}')
+    print(f'[bpreport_template.py:saveAsPDF] PDF saved to: {filepath}')
 
     pdf_file.close()
