@@ -144,7 +144,7 @@ class BPM:
     return all(k in dictionary.keys() for k in BPM.keys)
 
   @staticmethod
-  def get_risk_assessment(syst, diast) -> Tuple[int, str]:
+  def get_risk_indices(syst, diast) -> Tuple[int, int]:
     """get the risk idx and action recommendation for a blood pressure measurement
 
     Args:
@@ -156,17 +156,52 @@ class BPM:
       recommendation: the recommendation of the WHO
     """
     # loop from back to front. This ensures, the highest match is returned
-    for i in range(len(BPM.risk_classification) - 1, -1, -1):
+    #for i in range(len(BPM.risk_classification) - 1, -1, -1):
+    risk_idx_syst = -1
+    risk_idx_diast = -1
+    for i in range(0, len(BPM.risk_classification)):
       # a match is if either syst or diast is in the defined range
       if (
           BPM.risk_classification[i]['systole min'] <= syst
           and BPM.risk_classification[i]['systole max'] >= syst
-      ) or (
+      ):
+        risk_idx_syst = i
+      if (
           BPM.risk_classification[i]['diastole min'] <= diast
           and BPM.risk_classification[i]['diastole max'] >= diast
       ):
-        return BPM.risk_classification[i]['idx'], BPM.risk_classification[i]['recommendation']
-    return -1, 'unclassified'
+        risk_idx_diast = i
+    return risk_idx_syst, risk_idx_diast
+
+  @staticmethod
+  def get_risk_recommendation(risk_index: int) -> str:
+    """get the action recommendation for a given risk index
+
+    Args:
+      risk_index: the risk index for which a recommendation is wanted
+
+    Returns:
+      recommendation: the recommendation of the WHO
+    """
+    if risk_index in range(0, len(BPM.risk_classification)):
+      return BPM.risk_classification[risk_index]['recommendation']
+    return 'unclassified'
+
+  @staticmethod
+  def get_risk_assessment(syst, diast) -> Tuple[int, str]:
+    """get the risk idx for systolic and diastolic values
+
+    Args:
+      syst: systole of the measurement
+      diast: diastole of the measurement
+
+    Returns:
+      (int, int): tuple of (risk index systolic, risk index diastolic)
+    """
+    risk_idx_syst, risk_idx_diast = BPM.get_risk_indices(syst, diast)
+    risk_idx = max(risk_idx_syst, risk_idx_diast)
+    recommendation = BPM.get_risk_recommendation(risk_idx)
+    return risk_idx, recommendation
 
   @staticmethod
   def get_empty_measurement() -> dict[str, any] | None:

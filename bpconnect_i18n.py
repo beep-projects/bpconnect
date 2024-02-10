@@ -916,13 +916,13 @@ text = {
     },
     "plot_label_pulse_pressure": {
         "de": "Pulsdruck",
-        "en": "Pulse Pressure",
-        "es": "Presión de pulso",
-        "fr": "Pression pulsée",
-        "it": "Pressione arteriosa differenziale",
-        "pl": "Ciśnienie tętna",
-        "ru": "Пульсовое давление",
-        "tr": "Nabız basıncı",
+        "en": "pulse pressure",
+        "es": "presión de pulso",
+        "fr": "pression pulsée",
+        "it": "pressione arteriosa differenziale",
+        "pl": "ciśnienie tętna",
+        "ru": "лульсовое давление",
+        "tr": "nabız basıncı",
     },
     "plot_title_bp_classification": {
         "de": "Klassifizierung",
@@ -986,44 +986,28 @@ text = {
     },
     "template_disclaimer": {
         "de": (
-            "Basierend auf Daten der International Society of Hypertension (ISH). Die"
-            " gesundheitsbezogenen Daten sind nicht für medizinische Zwecke bestimmt und dienen"
-            " auch nicht der Diagnose, Heilung oder Vorbeugung von Krankheiten oder Zuständen."
+            "Die angegebene Klassifizierung basiert auf Daten der International Society of Hypertension (ISH). Die gesundheitsbezogenen Daten sind nicht für medizinische Zwecke bestimmt und dienen auch nicht der Diagnose, Heilung oder Vorbeugung von Krankheiten oder Zuständen."
         ),
         "en": (
-            "Based on data from the International Society of Hypertension (ISH). Health-related"
-            " data is not intended to be used for medical purposes, nor is it intended to diagnose,"
-            " cure or prevent any disease or condition."
+            "The given classification is based on data from the International Society of Hypertension (ISH). Health-related data is not intended to be used for medical purposes, nor is it intended to diagnose, cure or prevent any disease or condition."
         ),
         "es": (
-            "Basado en datos de la International Society of Hypertension (ISH). Los datos"
-            " relacionados con la salud no están destinados a ser utilizados con fines médicos, ni"
-            " a diagnosticar, curar o prevenir ninguna enfermedad o afección."
+            "La clasificación dada se basa en datos de la International Society of Hypertension (ISH). Los datos relacionados con la salud no están destinados a ser utilizados con fines médicos, ni a diagnosticar, curar o prevenir ninguna enfermedad o afección."
         ),
         "fr": (
-            "Basé sur les données de la International Society of Hypertension (ISH). Les données"
-            " relatives à la santé ne sont pas destinées à être utilisées à des fins médicales, ni"
-            " à diagnostiquer, guérir ou prévenir une maladie ou un état."
+            "La classification donnée est basée sur les données de l'International Society of Hypertension (ISH). Les données relatives à la santé ne sont pas destinées à être utilisées à des fins médicales, ni à diagnostiquer, guérir ou prévenir une maladie ou un état."
         ),
         "it": (
-            "Basato sui dati della International Society of Hypertension (ISH). I dati relativi"
-            " alla salute non sono destinati a essere utilizzati per scopi medici, né a"
-            " diagnosticare, curare o prevenire alcuna malattia o condizione."
+            "La classificazione fornita si basa sui dati della International Society of Hypertension (ISH). I dati relativi alla salute non sono destinati a essere utilizzati per scopi medici, né a diagnosticare, curare o prevenire alcuna malattia o condizione."
         ),
         "pl": (
-            "Na podstawie danych International Society of Hypertension (ISH). Dane dotyczące"
-            " zdrowia nie są przeznaczone do celów medycznych ani do diagnozowania, leczenia lub"
-            " zapobiegania jakimkolwiek chorobom lub stanom."
+            "Podana klasyfikacja opiera się na danych International Society of Hypertension (ISH). Dane dotyczące zdrowia nie są przeznaczone do celów medycznych ani do diagnozowania, leczenia lub zapobiegania jakimkolwiek chorobom lub stanom."
         ),
         "ru": (
-            "Основано на данных International Society of Hypertension (ISH). Данные, касающиеся"
-            " здоровья, не предназначены для использования в медицинских целях, а также для"
-            " диагностики, лечения или профилактики каких-либо заболеваний или состояний."
+            "Приведенная классификация основана на данных International Society of Hypertension (ISH). Данные о здоровье не предназначены для использования в медицинских целях, а также для диагностики, лечения или профилактики каких-либо заболеваний или состояний."
         ),
         "tr": (
-            "International Society of Hypertension (ISH) verilerine dayanmaktadır. Sağlıkla ilgili"
-            " verilerin tıbbi amaçlarla kullanılması amaçlanmadığı gibi herhangi bir hastalığı veya"
-            " durumu teşhis etme, iyileştirme veya önleme amacı da taşımamaktadır."
+            "Verilen sınıflandırma International Society of Hypertension (ISH) verilerine dayanmaktadır. Sağlıkla ilgili verilerin tıbbi amaçlarla kullanılması amaçlanmadığı gibi herhangi bir hastalığı veya durumu teşhis etmek, iyileştirmek veya önlemek için de tasarlanmamıştır."
         ),
     },
     "template_section_title_measurements": {
@@ -1126,6 +1110,16 @@ text = {
         "ru": "Средние дневные значения",
         "tr": "Günlük Ortalamalar",
     },
+    "plot_title_2hour_average": {
+        "de": "2-Stunden-Durchschnitt",
+        "en": "2-Hour Average",
+        "es": "Media de 2 horas",
+        "fr": "Moyenne sur 2 heures",
+        "it": "Media di 2 ore",
+        "pl": "Średnia 2-godzinna",
+        "ru": "2-часовое среднее",
+        "tr": "2-Saatlik Ortalama",
+    },
     "plot_label_date": {
         "de": "Datum",
         "en": "Date",
@@ -1135,6 +1129,16 @@ text = {
         "pl": "Data",
         "ru": "Дата",
         "tr": "Tarih",
+    },
+    "plot_label_time": {
+        "de": "Uhrzeit",
+        "en": "Time of day",
+        "es": "Hora del día",
+        "fr": "Hora del día",
+        "it": "Ora del giorno",
+        "pl": "Pora dnia",
+        "ru": "Время дня",
+        "tr": "Günün saati",
     },
     "text_id": {
         "de": "text_german",

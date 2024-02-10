@@ -9,7 +9,10 @@
   <style type="text/css">
     @page {
       size: 8.2in 11.6in; /*DIN A4 21.0cm 29.7cm*/
-      margin: 0.5in;
+      margin-top: 0.3in;
+      margin-bottom: 0.3in;
+      margin-left: 0.5in;
+      margin-right: 0.5in;
       /*empirical measured: width is 1407 px*/
       margin-bottom: 1.0in;
       @frame footer {
@@ -170,7 +173,9 @@
       </td>
     </tr>
   </table>
-
+  <div class="disclaimer">
+    [DISCLAIMER]
+  </div>
   <table border="0">
     <tr>
       <td colspan="3"><img src="scatter.svg" width="1527px" /></td><!--1407-->
@@ -179,14 +184,14 @@
       <td colspan="3"><img src="measurement_series.svg" width="1527px" /></td><!--1407-->
     </tr>
     <tr>
+      <td colspan="3"><img src="2h_average.svg" width="1527px" /></td><!--1407-->
+    </tr>
+    <tr>
       <td width="700px"><img src="hist.svg" width="700px" /></td>
       <td></td>
       <td width="700px"><img src="pdfs.svg" width="700px" /></td>
     </tr>
   </table>
-  <p class="disclaimer">
-  [DISCLAIMER]
-  </p>
   <pdf:nextpage /> 
 
   <p class="title">[SECTION_TITLE_MEASUREMENTS]</p>

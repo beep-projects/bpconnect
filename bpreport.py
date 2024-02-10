@@ -23,12 +23,14 @@ and upload them to Garmin Connect
 import argparse
 from bpm import BPM
 from bpconnect_i18n import text_lang, text
-from datetime import date, datetime
+from datetime import date, datetime, timedelta
 import json
+import math
 import numpy as np
 import pandas as pd
 from pathlib import Path
 import matplotlib.pyplot as plt
+import matplotlib.colors as colors
 from matplotlib.colors import ListedColormap
 import matplotlib.font_manager as fm
 import os
@@ -53,8 +55,8 @@ time_postfix = datetime.now().strftime('%Y%m%d-%H%M%S')
 # general plot configuration
 ### size of figures [width, height] in inches
 ### DIN A4: 11.6 x 8.2
-figsize_full_width = [8, 3.1]
-figsize_half_width = [4, 3.1]
+figsize_full_width = [8, 2.4]
+figsize_half_width = [4, 2.4]
 
 ### fonts
 font_plot_title = {'font': font_folder / 'Roboto-Regular.ttf', 'size': 12, 'wrap': True}
@@ -63,7 +65,7 @@ font_plot_ax_ticks = {'font': font_folder / 'Roboto-Regular.ttf', 'size': 8}
 font_plot_legend = fm.FontProperties(fname=font_folder / 'Roboto-Regular.ttf', size=8)
 ### colors
 colors_category = [
-    (1.0, 1.0, 0.69, 1.0),
+    (0.86, 0.96, 0.96, 1.0),
     (0.88, 0.95, 0.69, 1.0),
     (0.75, 0.89, 0.46, 1.0),
     (0.57, 0.82, 0.56, 1.0),
@@ -76,6 +78,11 @@ color_systolic = 'red'
 color_diastolic = 'dodgerblue'
 color_pulse_pressure = 'grey'
 color_plot_background = (0.75, 0.75, 0.75, 0.25)
+### markers
+scatter_marker='o'
+scatter_marker_size=30
+scatter_marker_linewidth=1.0
+
 ### axis ranges
 category_systolic = [c['systole min'] for c in BPM.risk_classification]
 category_systolic.append(BPM.risk_classification[-1]['systole max'])
@@ -161,16 +168,13 @@ def _bp_scatter_plot(df, block=True):
         | ((x_diastole >= category_diastolic[i]) & (y_systole >= category_systolic[i]))
     ] = i
 
-  # rcParams['font.weight'] = 'bold'
-  # fig, ax = plt.subplots()
   fig = plt.figure(figsize=figsize_full_width)
-  # ax = fig.add_subplot()
   # left, bottom, width, height
-  ax = fig.add_axes([0.1, 0.15, 0.85, 0.75])
+  ax = fig.add_axes([0.05, 0.20, 0.925, 0.70])
 
   ax.margins(x=0.2, y=0.2)
   alpha = max(0.1, 20 / len(xvals))
-  ax.scatter(xvals, yvals, alpha=alpha, marker='.', s=150, linewidth=0.0, color='black')
+  ax.scatter(xvals, yvals, alpha=alpha, marker=scatter_marker, s=scatter_marker_size+(2*scatter_marker_linewidth), linewidths=0, color='black')
   ax.imshow(
       backgr[:-1, :-1],
       cmap=ListedColormap(colors_category),
@@ -204,7 +208,8 @@ def _bp_risk_index_hist(df, block=True):
   """
 
   fig = plt.figure(figsize=figsize_half_width)
-  ax = fig.add_axes([0.15, 0.40, 0.8, 0.5])
+  # left, bottom, width, height
+  ax = fig.add_axes([0.1, 0.30, 0.85, 0.55])
 
   ax.margins(x=0.2, y=0.2)
   risk_idx = [ri['idx'] for ri in BPM.risk_classification]
@@ -215,7 +220,7 @@ def _bp_risk_index_hist(df, block=True):
   ticks = [patch._x0 + 0.5 for patch in patches]  # pylint: disable=W0212
   ticklabels = [text[ri['name']][lang] for ri in BPM.risk_classification]
   plt.xticks(
-      ticks, ticklabels, rotation=45, rotation_mode='anchor', ha='right', **font_plot_ax_label
+      ticks, ticklabels, rotation=20, rotation_mode='anchor', ha='right', **font_plot_ax_label
   )
   plt.yticks(**font_plot_ax_ticks)
   plt.ylabel(text['plot_label_frequency'][lang], **font_plot_ax_label)
@@ -246,6 +251,8 @@ def _get_cdf(data, interpolate=False):
   if interpolate:
     result = result.interpolate()
   result.at[result.index[0]] = 0
+  if result.at[result.index[-1]] < 1.0:
+    result.at[result.index[-1]] = 1.0
   return result.index.to_list(), result.values.tolist()
 
 
@@ -297,7 +304,7 @@ def _bp_pdfs(df, block=True):
 
   fig = plt.figure(figsize=figsize_half_width)
   # left, bottom, width, height
-  ax = fig.add_axes([0.15, 0.40, 0.8, 0.5])
+  ax = fig.add_axes([0.1, 0.30, 0.85, 0.55])
   ax.margins(x=0.2, y=0.2)
   syst = df[BPM.systolic]
   x, y = _get_pdf(syst, interpolate=True)
@@ -334,7 +341,7 @@ def _bp_pdfs(df, block=True):
   return fig
 
 
-def _bp_measurement_series(df, block=True):
+def _bp_daily_averages(df, block=True):
   # set date as index for grouping
   df = df.set_index('date')
   # add systolic min max avg per day
@@ -361,7 +368,8 @@ def _bp_measurement_series(df, block=True):
   ]
   # create figure
   fig = plt.figure(figsize=figsize_full_width)
-  ax = fig.add_axes([0.1, 0.15, 0.85, 0.75])
+  # left, bottom, width, height
+  ax = fig.add_axes([0.05, 0.20, 0.925, 0.70])
   ax.plot(
       df[BPM.date],
       df[f'{BPM.systolic}_mean'],
@@ -401,8 +409,9 @@ def _bp_measurement_series(df, block=True):
         dates,
         systolic_mean,
         linestyle='None',
-        marker='.',
-        markersize=10,
+        marker=scatter_marker,
+        markersize=math.sqrt(scatter_marker_size),
+        markeredgewidth=scatter_marker_linewidth,
         color=colors_category[risk_index],
         zorder=4,
     )
@@ -410,15 +419,16 @@ def _bp_measurement_series(df, block=True):
         dates,
         diastolic_mean,
         linestyle='None',
-        marker='.',
-        markersize=10,
+        marker=scatter_marker,
+        markersize=math.sqrt(scatter_marker_size),
+        markeredgewidth=scatter_marker_linewidth,
         color=colors_category[risk_index],
         zorder=4,
     )
     ax.plot(
         (dates, dates),
         (systolic_mean, diastolic_mean),
-        linewidth=5,
+        linewidth=math.sqrt(scatter_marker_size),
         color=colors_category[risk_index],
         alpha=0.5,
         zorder=1,
@@ -459,6 +469,116 @@ def _bp_measurement_series(df, block=True):
   plt.xticks(**font_plot_ax_ticks)
   plt.yticks(**font_plot_ax_ticks)
   plt.xlim([min(df[BPM.date]), max(df[BPM.date])])
+  plt.ylim([category_diastolic[0], category_systolic[-1]])
+  plt.show(block=block)
+  return fig
+
+
+def to_hours(dt):
+    """Return floating point number of hours through the day in `datetime` dt."""
+    return dt.hour + dt.minute / 60 + dt.second / 3600
+  
+def _bp_xmin_averages(df, minutes, block=True):
+  # create figure
+  fig = plt.figure(figsize=figsize_full_width)
+  ax = fig.add_axes([0.05, 0.20, 0.925, 0.70])
+  data = pd.DataFrame()
+  data[BPM.time] = df[BPM.time]
+  data[BPM.systolic] = df[BPM.systolic]
+  data[BPM.diastolic] = df[BPM.diastolic]
+  data[BPM.pulse_pressure] = df[BPM.pulse_pressure]
+  data = data.sort_values(by=BPM.time)
+  length = len(data)
+  # df.rolling can only operate on datetime, so we have to convert the time to some arbitrary datetime
+  # to have the rolling average looping around at day change, we add day-1 and day+1 and remove them after average calculation
+  someDate = date(2022, 6, 10)
+  dataStart = data.copy()
+  dataStart[BPM.time] = [datetime.combine(someDate, t) for t in data[BPM.time]]
+  someDate = date(2022, 6, 12)
+  dataEnd = data.copy()
+  dataEnd[BPM.time] = [datetime.combine(someDate, t) for t in data[BPM.time]]
+  someDate = date(2022, 6, 11)
+  data[BPM.time] = [datetime.combine(someDate, t) for t in data[BPM.time]]
+  data = pd.concat([dataStart, data, dataEnd])
+  data = data.set_index(BPM.time)
+
+  dfMean = data.rolling(window=f'{minutes}T', center=True,).mean()
+  dfMean = dfMean.iloc[length:2*length]
+  dfMean = dfMean.reset_index()
+  dfMean[BPM.time] = pd.to_datetime(dfMean[BPM.time]).dt.time
+  # scatter plot can not handle time, so we have to convert the time to hours as float
+  dfMean['hours'] = dfMean[BPM.time].map(to_hours)
+  df['hours'] = df[BPM.time].map(to_hours)
+  df[['risk_idx_systolic', 'risk_idx_diastolic']] = df.apply(lambda x: (BPM.get_risk_indices(x[BPM.systolic], x[BPM.diastolic])), axis=1, result_type='expand')
+    
+  marker_alpha = 0.3
+  markeredge_alpha = 0.1
+  for i in range(0, len(colors_category)):
+   ax.scatter(
+      df['hours'].loc[df['risk_idx_systolic'] == i],
+      df[BPM.systolic].loc[df['risk_idx_systolic'] == i],
+      color=colors.to_rgba(colors_category[i], marker_alpha),
+      edgecolors=colors.to_rgba(color_systolic, markeredge_alpha),
+      marker=scatter_marker,
+      s=scatter_marker_size,
+      linewidths=scatter_marker_linewidth,
+      zorder=3,
+  )
+  ax.plot(
+      dfMean['hours'],
+      dfMean[BPM.systolic],
+      color=color_systolic,
+      alpha=0.5,
+      label=f'{text["plot_label_systolic"][lang]} (2h Ø)',
+      zorder=4,
+  )
+  for i in range(0, len(colors_category)):
+   ax.scatter(
+      df['hours'].loc[df['risk_idx_diastolic'] == i],
+      df[BPM.diastolic].loc[df['risk_idx_diastolic'] == i],
+      color=colors.to_rgba(colors_category[i], marker_alpha),
+      edgecolors=colors.to_rgba(color_diastolic, markeredge_alpha),
+      marker=scatter_marker,
+      s=scatter_marker_size,
+      linewidths=scatter_marker_linewidth,
+      zorder=3,
+  )
+  ax.plot(
+      dfMean['hours'],
+      dfMean[BPM.diastolic],
+      color=color_diastolic,
+      alpha=0.5,
+      label=f'{text["plot_label_diastolic"][lang]} (2h Ø)',
+      zorder=4,
+  )
+  ax.plot(
+      dfMean['hours'],
+      dfMean[BPM.pulse_pressure],
+      color=color_pulse_pressure,
+      alpha=0.5,
+      label=f'{text["plot_label_pulse_pressure"][lang]} (2h Ø)',
+      zorder=4,
+  )
+
+  # set title and labels
+  plt.xlabel(text['plot_label_time'][lang], **font_plot_ax_label)
+  plt.ylabel(text['plot_label_pressure'][lang], **font_plot_ax_label)
+  plt.title(text['plot_title_2hour_average'][lang], **font_plot_title)
+  plt.legend(prop=font_plot_legend)
+  # set grid
+  ax.set_facecolor(color_plot_background)
+  ax.grid(which='major', color='white', linewidth=1.0)
+  ax.grid(which='minor', color='white', linewidth=0.5)
+  # Show the minor ticks and grid.
+  ax.minorticks_on()
+  # force grid lines in the background
+  ax.set_axisbelow(True)
+  # Now hide the minor ticks (but leave the gridlines).
+  # ax.tick_params(which='minor', bottom=False, left=False)
+
+  plt.xticks(**font_plot_ax_ticks)
+  plt.yticks(**font_plot_ax_ticks)
+  plt.xlim([0, 24])
   plt.ylim([category_diastolic[0], category_systolic[-1]])
   plt.show(block=block)
   return fig
@@ -568,16 +688,18 @@ def main():
   if config_changed:
     _write_config()
 
-  df = _read_measurements().reset_index(drop=True)
+  df = _read_measurements()
   if df is not None:
     # drop unwanted measurements
+    df = df.reset_index(drop=True)
     if start_date:
       df = df.drop(df[(df[BPM.date] < start_date)].index)
     if end_date:
       df = df.drop(df[(df[BPM.date] > end_date)].index)
 
     print(f'[bpreport.py:main] {len(df)} measurements loaded')
-    fig_measurement_series = _bp_measurement_series(df, block=False)
+    
+    fig_measurement_series = _bp_daily_averages(df, block=False)
     _save_fig(fig_measurement_series, (report_folder / 'measurement_series.svg'))
 
     fig_scatter = _bp_scatter_plot(df, block=False)
@@ -588,6 +710,10 @@ def main():
 
     fig_pdfs = _bp_pdfs(df, block=False)
     _save_fig(fig_pdfs, (report_folder / 'pdfs.svg'))
+
+    fig_2haverage = _bp_xmin_averages(df, 120, block=False)
+    _save_fig(fig_2haverage, (report_folder / '2h_average.svg'))
+
 
     report = BpReportTemplate(report_folder, 'bpreport_template.html')
     report.set_name(name)
