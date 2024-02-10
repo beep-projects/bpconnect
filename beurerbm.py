@@ -28,8 +28,6 @@ from typing_extensions import override
 import usb.core
 
 
-
-
 class BeurerBMSerial(BloodPressureMeter):
   """Class to support Beurer devices using a USB to serial converter
 

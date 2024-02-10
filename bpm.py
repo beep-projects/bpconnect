@@ -15,7 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see https://www.gnu.org/licenses/
 # -------------------------------------------------------------------------------------------------
-"""Module that provides only static class BPM and abstract class BloodPressureMeter """
+"""Module that provides only static class BPM and abstract class BloodPressureMeter"""
 from typing import Tuple
 from abc import ABC, abstractmethod
 
@@ -156,7 +156,7 @@ class BPM:
       recommendation: the recommendation of the WHO
     """
     # loop from back to front. This ensures, the highest match is returned
-    #for i in range(len(BPM.risk_classification) - 1, -1, -1):
+    # for i in range(len(BPM.risk_classification) - 1, -1, -1):
     risk_idx_syst = -1
     risk_idx_diast = -1
     for i in range(0, len(BPM.risk_classification)):
@@ -237,6 +237,7 @@ class BPM:
         BPM.risk_index: -1,
         BPM.recommendation: '',
     }
+
 
 class BloodPressureMeter(ABC):
   """Abstract class for implementing Beurer blood preassure meters"""

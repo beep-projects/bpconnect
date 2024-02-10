@@ -24,9 +24,9 @@ import xhtml2pdf.pisa as pisa
 from datetime import date, datetime
 from pathlib import Path
 import sys
-sys.path.append(Path(__file__).parent.parent.resolve())
-from bpm import BPM
 
+sys.path.append(Path(__file__).parent.parent.resolve())  # pylint: disable=wrong-import-position
+from bpm import BPM
 
 
 class BpReportTemplate:
@@ -39,7 +39,12 @@ class BpReportTemplate:
   def __init__(self, template_folder, template_file):
     self.template_folder = Path(template_folder)
     self.template_file = template_file
-    print(f'[bpreport_template.py:__init__] using template file: {self.template_folder / template_file}')
+    print(
+        (
+            '[bpreport_template.py:__init__] using template file'
+            f': {self.template_folder / template_file}'
+        )
+    )
     with open(self.template_folder / self.template_file, 'r', encoding='utf-8') as f:
       self.html = f.read()
 
@@ -84,11 +89,11 @@ class BpReportTemplate:
         notes += f'{row[BPM.recommendation]}'
       rows_html += (
           '<tr class="readings">\n'
-          f'<td class="readings">{datetime.combine(row[BPM.date], row[BPM.time]).strftime("%x %X")}</td>\n'
+          f'<td class="readings">{datetime.combine(row[BPM.date], row[BPM.time]).strftime("%x %X")}</td>\n'  # pylint: disable=line-too-long
           f'<td class="readings">{row[BPM.systolic]} / {row[BPM.diastolic]}</td>\n'
           f'<td class="readings">{row[BPM.pulse_pressure]}</td>\n'
           f'<td class="readings">{row[BPM.pulse]}</td>\n'
-          f'<td class="readings">{row[BPM.risk_index]} - {BPM.risk_classification[row[BPM.risk_index]]["name"]}</td>\n'
+          f'<td class="readings">{row[BPM.risk_index]} - {BPM.risk_classification[row[BPM.risk_index]]["name"]}</td>\n'  # pylint: disable=line-too-long
           f'<td class="readings">{notes}</td>\n'
           '</tr>\n'
       )
@@ -96,7 +101,6 @@ class BpReportTemplate:
     return None
 
   def translate_template(self, text, lang):
-    
     for key in text:
       self.html = self.html.replace(text[key]['en'], text[key][lang])
 
@@ -111,7 +115,9 @@ class BpReportTemplate:
     self.html = self.html.replace(
         '[TABLE_HEADER_MEASUREMENT]', text['template_table_header_measurement'][lang]
     )
-    self.html = self.html.replace('[TABLE_HEADER_PULSE_PRESSURE]', text['template_table_header_pulse_pressure'][lang])
+    self.html = self.html.replace(
+        '[TABLE_HEADER_PULSE_PRESSURE]', text['template_table_header_pulse_pressure'][lang]
+    )  # pylint: disable=line-too-long
     self.html = self.html.replace('[TABLE_HEADER_PULSE]', text['template_table_header_pulse'][lang])
     self.html = self.html.replace(
         '[TABLE_HEADER_CLASSIFICATION]', text['template_table_header_classification'][lang]
@@ -128,7 +134,7 @@ class BpReportTemplate:
         self.html,
         dest=pdf_file,
         encoding='utf-8',
-        path=f'{self.template_folder / self.template_file}'
+        path=f'{self.template_folder / self.template_file}',
     )
     print(f'[bpreport_template.py:saveAsPDF] PDF saved to: {filepath}')
 
