@@ -498,8 +498,8 @@ def _bp_xmin_averages(df, minutes, block=True):
   data[BPM.pulse_pressure] = df[BPM.pulse_pressure]
   data = data.sort_values(by=BPM.time)
   length = len(data)
-  # df.rolling can only operate on datetime, so we have to convert the time to any datetime
-  # to have the rolling average looping around at day change, we add day-1 and day+1
+  # df.rolling can only operate on datetime, so we have to convert the time to any datetime.
+  # To have the rolling average looping around at day change, we add day-1 and day+1
   # and remove them after average calculation
   some_date = date(2022, 6, 10)
   data_start = data.copy()
