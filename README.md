@@ -21,7 +21,7 @@
 
 | # bpconnect | # bpreport |
 |:--- |:--- |
-|`bpconnect.py` is a python script to upload measurements from a blood pressure meter to [Garmin Connect](https://connect.garmin.com). Each uploaded measurement is annotated with risk grading  and recommendation for action, to support you in understanding the data. In your Garmin Connect account, the data will show up as Health Data - Blood Preassure. Currently only the [Beurer BM58](https://www.beurer.com/uk/p/65516/#overview--anchor) is supported, if you want to get support for other devices, you just need to volunteer for testing, or read the [Contribute](#Contribute) section and add it on your own. | With `bpreport.py` you can generate a Blood Preassure Report as PDF. The report includes some graphs and a full listing of all measuremnts used for the report. The generation of the report requires that you use `bpconnect.py` with the `--save-locally` option, to activate the creation of a local file for the measurements. |  
+|`bpconnect.py` is a python script to upload measurements from a blood pressure meter to [Garmin Connect](https://connect.garmin.com). Each uploaded measurement is annotated with risk grading  and recommendation for action, to support you in understanding the data. In your Garmin Connect account, the data will show up as Health Data - Blood Preassure. Currently only the [Beurer BM58](https://www.beurer.com/uk/p/65516/#overview--anchor) is supported, if you want to get support for other devices, you just need to volunteer for testing, or read the [Contribute](#Contribute) section and add it on your own. | With `bpreport.py` you can generate a Blood Preassure Report as PDF. The report includes some graphs and a full listing of all measuremnts used for the report. The generation of the report requires that you use `bpconnect.py` with the `--save-locally` option, to activate the creation of a local file for the measurements, but you do not have to upload your data to Garmin. |  
 |<div align="center"> <img src="resources/connect_app_overview.png" alt="Blood pressure daily overview" style="width:200px;"/> <img src="resources/connect_app_notes.png" alt="Notes added to the measurements" style="width:200px"/> </div>|<div align="center"> <img src="resources/scatter.svg" alt="Classification" style="width:400px;"/> <img src="resources/measurement_series.svg" alt="Daily Averages" style="width:400px;"/> <img src="resources/2h_average.svg" alt="2-hour Average" style="width:400px;"/> <img src="resources/hist.svg" alt="Readings per Classification" style="width:200px;"/> <img src="resources/pdfs.svg" alt="Distribution" style="width:200px;"/> </div>|
 
 > [!NOTE]
@@ -209,10 +209,13 @@ If you want to contribute to this project, please read the [Contributing Guide](
 
 The language support is just added out of couriosity on how this could be done without using a big framework. So the translations are actually all done by an online translator. Feel free to improve the texts or add a new language in [bpconnect_i18n.py](bpconnect_i18n.py)
 
-If you want to add support for another Beurer device, you can register at https://connect.beurer.com/developer/ and get access to the documentation of communication protocols. The needed code changes can be talked about in the [Discussions](https://github.com/beep-projects/bpconnect/discussions).
+https://codeberg.org/LazyT/ubpm#devices
+
+If you want to add support for another device, you need access to the documentation of the communication protocols or you find another project that already supports your device, e.g. from [this one](https://codeberg.org/LazyT/ubpm#devices). Once you have that documentation or code, you can open a new [Discussion](https://github.com/beep-projects/bpconnect/discussions) to add the device.
 
 Projects which I used as a starting point
 - https://github.com/muling-tt/beurer_bm58
 - https://gitlab.com/dieheins/bpmeter
 - https://github.com/curzon01/bm58
 - https://github.com/cyberjunky/python-garminconnect
+- https://codeberg.org/LazyT/ubpm
