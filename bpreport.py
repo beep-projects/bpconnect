@@ -173,7 +173,7 @@ def _bp_scatter_plot(df, block=True):
   ax = fig.add_axes([0.05, 0.20, 0.925, 0.70])
 
   ax.margins(x=0.2, y=0.2)
-  alpha = max(0.1, 20 / len(xvals))
+  alpha = min(1.0, max(0.1, 20 / len(xvals)))
   ax.scatter(
       xvals,
       yvals,
