@@ -72,7 +72,7 @@ def _init_garmin_connect():
   """Initialize connection to Garmin Connect with your credentials."""
 
   try:
-    tokenfolder = data_folder / f'oauth{user_id}'
+    tokenfolder = str(data_folder / f'oauth{user_id}')
     print(f'{text["info_trying_gc_login"][lang]} "{tokenfolder}"...')
     garmin = Garmin()
     garmin.login(tokenfolder)

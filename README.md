@@ -209,9 +209,7 @@ If you want to contribute to this project, please read the [Contributing Guide](
 
 The language support is just added out of couriosity on how this could be done without using a big framework. So the translations are actually all done by an online translator. Feel free to improve the texts or add a new language in [bpconnect_i18n.py](bpconnect_i18n.py)
 
-https://codeberg.org/LazyT/ubpm#devices
-
-If you want to add support for another device, you need access to the documentation of the communication protocols or you find another project that already supports your device, e.g. from [this one](https://codeberg.org/LazyT/ubpm#devices). Once you have that documentation or code, you can open a new [Discussion](https://github.com/beep-projects/bpconnect/discussions) to add the device.
+If you want to add support for another device, you need access to the documentation of the communication protocols or you find another project that already supports your device, e.g. the [Universal Blood Pressure Manager](https://codeberg.org/LazyT/ubpm#devices) supports a wide range of devices. Once you have that documentation or code, you can open a new [Discussion](https://github.com/beep-projects/bpconnect/discussions) on adding support for that device.
 
 Projects which I used as a starting point
 - https://github.com/muling-tt/beurer_bm58
