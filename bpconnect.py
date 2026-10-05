@@ -28,8 +28,12 @@ from datetime import date, datetime, timedelta
 import hashlib
 import beurerbm
 from bpconnect_i18n import text_lang, text
-from garth.exc import GarthHTTPError
-from garminconnect import Garmin, GarminConnectAuthenticationError
+from garminconnect import (
+    Garmin,
+    GarminConnectAuthenticationError,
+    GarminConnectConnectionError,
+    GarminConnectTooManyRequestsError,
+)
 from getpass import getpass
 import json
 import pandas as pd
@@ -50,19 +54,21 @@ max_age_days = 90
 
 def _login():
   """Login to Garmin Connect, test connection and save credentials on success."""
-  garmin = Garmin()
+  tokenfolder = str(data_folder / f'oauth{user_id}')
   garmin_email, garmin_password = _get_credentials()
   try:
-    garmin = Garmin(garmin_email, garmin_password)
+    garmin = Garmin(email=garmin_email, password=garmin_password)
     garmin.login()
+    garmin.client.dump(tokenfolder)
     name = garmin.get_full_name()
     print(f'{text["info_login_success_as"][lang]}: {name}')
     users[str(user_id)] = {'garmin_email': garmin_email, 'garmin_password': garmin_password}
     _write_config()
   except (
       FileNotFoundError,
-      GarthHTTPError,
       GarminConnectAuthenticationError,
+      GarminConnectConnectionError,
+      GarminConnectTooManyRequestsError,
       requests.exceptions.HTTPError,
   ) as ex:
     print(f'Login error: {ex}')
@@ -78,8 +84,9 @@ def _init_garmin_connect():
     garmin.login(tokenfolder)
   except (
       FileNotFoundError,
-      GarthHTTPError,
       GarminConnectAuthenticationError,
+      GarminConnectConnectionError,
+      GarminConnectTooManyRequestsError,
       requests.exceptions.HTTPError,
   ):
     print(text['info_login_failed_trying_email_pw'][lang])
@@ -92,14 +99,15 @@ def _init_garmin_connect():
         print(f'[bpconnect:_init_garmin_connect] Error: {text["error_no_credentials"][lang]}')
         return None
       print(text['info_found_credentials_in_config'][lang])
-      garmin = Garmin(credentials['garmin_email'], credentials['garmin_password'])
+      garmin = Garmin(email=credentials['garmin_email'], password=credentials['garmin_password'])
       garmin.login()
       # Save tokens for next login
-      garmin.garth.dump(tokenfolder)
+      garmin.client.dump(tokenfolder)
     except (
         FileNotFoundError,
-        GarthHTTPError,
         GarminConnectAuthenticationError,
+        GarminConnectConnectionError,
+        GarminConnectTooManyRequestsError,
         requests.exceptions.HTTPError,
     ):
       return None
